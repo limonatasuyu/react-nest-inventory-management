@@ -6,8 +6,8 @@ export type SupplierDocument = HydratedDocument<Supplier>;
 
 @Schema()
 export class Supplier {
-  @Prop({ required: true, unique: true })
-  _id: mongoose.Schema.Types.ObjectId;
+  //@Prop({ required: true, unique: true })
+  //_id: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
   name: string;

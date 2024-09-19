@@ -6,8 +6,8 @@ export type CategoryDocument = HydratedDocument<Category>;
 
 @Schema()
 export class Category {
-  @Prop({ required: true, unique: true })
-  _id: mongoose.Schema.Types.ObjectId;
+  //@Prop({ required: true, unique: true })
+  //_id: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
   name: string;

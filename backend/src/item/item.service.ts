@@ -5,16 +5,43 @@ import {
 } from '@nestjs/common';
 import mongoose, { Model } from 'mongoose';
 import { Item } from '../schemes/item.schema';
-import { CreateItemDTO, GetItemsDTO, UpdateItemDTO } from 'src/dto/items.dto';
+import {
+  CreateItemDTO,
+  DeleteItemDTO,
+  GetItemsDTO,
+  UpdateItemDTO,
+} from 'src/dto/items.dto';
 import { CategoryService } from 'src/category/category.service';
+import { SupplierService } from 'src/supplier/supplier.service';
+import { UserService } from '../user/user.service';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class ItemService {
   constructor(
-    private itemsModel: Model<Item>,
+    @InjectModel(Item.name) private itemsModel: Model<Item>,
     private userService: UserService,
     private categoryService: CategoryService,
+    private supplierService: SupplierService,
   ) {}
+
+  async deleteItem(dto: DeleteItemDTO) {
+    const existingUser = await this.userService.findOne(dto.userId);
+    if (!existingUser) throw new BadRequestException();
+    const updatedItem = await this.itemsModel.updateOne(
+      {
+        _id: new mongoose.Types.ObjectId(dto.itemId),
+      },
+      {
+        isArchived: true,
+      },
+    );
+
+    if (!updatedItem || !updatedItem.modifiedCount) {
+      throw new BadRequestException();
+    }
+    return { message: 'Item deleted successfully.' };
+  }
 
   async getItem(itemId: string) {
     const item = this.itemsModel.findOne({
@@ -27,14 +54,11 @@ export class ItemService {
   }
 
   async createItem(dto: CreateItemDTO) {
-    const existingUsers = await this.userService.findMany([
-      dto.userId,
-      dto.supplierId,
-    ]);
-    if (!existingUsers.length) throw new BadRequestException();
-    const existingCategory = await this.categoryService.findOnde(
-      dto.categoryId,
-    );
+    const existingUser = await this.userService.findOne(dto.userId);
+    if (!existingUser) throw new BadRequestException();
+    const existingSupplier = await this.supplierService.findOne(dto.supplierId);
+    if (!existingSupplier) throw new BadRequestException();
+    const existingCategory = await this.categoryService.findOne(dto.categoryId);
     if (!existingCategory) throw new BadRequestException();
     const createdItem = await this.itemsModel.create({
       _id: new mongoose.Types.ObjectId(),
@@ -62,7 +86,7 @@ export class ItemService {
     };
   }
 
-  async UpdateItem(dto: UpdateItemDTO) {
+  async updateItem(dto: UpdateItemDTO) {
     const existingUser = await this.userService.findOne(dto.userId);
     if (!existingUser) throw new BadRequestException();
     const updatedItem = await this.itemsModel.updateOne(
@@ -80,7 +104,7 @@ export class ItemService {
     if (!updatedItem || !updatedItem.modifiedCount) {
       throw new BadRequestException();
     }
-    return { message: 'Item Updated successfully.' };
+    return { message: 'Item updated successfully.' };
   }
 
   async getItems(dto: GetItemsDTO) {
@@ -157,5 +181,12 @@ export class ItemService {
     ]);
 
     return { ...items[0], message: 'Items received successfully.' };
+  }
+
+  async findOne(id: string) {
+    const item = await this.itemsModel.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+    });
+    return item?.toObject();
   }
 }

@@ -31,3 +31,8 @@ export interface CreateItemDTO {
   description: string;
   userId: string;
 }
+
+export interface DeleteItemDTO {
+  userId: string;
+  itemId: string;
+}

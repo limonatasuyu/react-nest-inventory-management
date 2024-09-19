@@ -6,8 +6,8 @@ export type OrderDocument = HydratedDocument<Order>;
 
 @Schema()
 export class Order {
-  @Prop({ required: true, unique: true })
-  _id: mongoose.Schema.Types.ObjectId;
+  //@Prop({ required: true, unique: true })
+  //_id: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true, ref: 'Item' })
   itemId: mongoose.Schema.Types.ObjectId;

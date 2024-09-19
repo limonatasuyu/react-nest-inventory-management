@@ -6,8 +6,8 @@ export type ItemDocument = HydratedDocument<Item>;
 
 @Schema()
 export class Item {
-  @Prop({ required: true, unique: true })
-  _id: mongoose.Schema.Types.ObjectId;
+  //@Prop({ required: true, unique: true })
+  //_id: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
   name: string;
@@ -35,6 +35,9 @@ export class Item {
 
   @Prop({ required: true })
   updatedAt: Date;
+
+  @Prop({ required: true })
+  isArchived: boolean;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

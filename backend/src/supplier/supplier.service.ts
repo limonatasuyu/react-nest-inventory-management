@@ -11,11 +11,13 @@ import {
   DeleteSupplierDTO,
 } from 'src/dto/supplier.dto';
 import { Supplier } from 'src/schemes/supplier.schema';
+import { UserService } from '../user/user.service';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class SupplierService {
   constructor(
-    private supplierModel: Model<Supplier>,
+    @InjectModel(Supplier.name) private supplierModel: Model<Supplier>,
     private userService: UserService,
   ) {}
 
@@ -53,7 +55,7 @@ export class SupplierService {
     return { message: 'Supplier created succesfully.' };
   }
 
-  async createSuppliersSelect(dto: CreateSupplierDTO) {
+  async createSupplier(dto: CreateSupplierDTO) {
     const existingUser = await this.userService.findOne(dto.userId);
     if (!existingUser) throw new BadRequestException();
     const createdSupplier = await this.supplierModel.create({
@@ -130,5 +132,12 @@ export class SupplierService {
       throw new InternalServerErrorException();
 
     return { ...suppliers[0], message: 'Suppliers received succesfully.' };
+  }
+
+  async findOne(id: string) {
+    const category = await this.supplierModel.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+    });
+    return category?.toObject();
   }
 }

@@ -5,20 +5,24 @@ import {
 } from '@nestjs/common';
 import mongoose, { Model } from 'mongoose';
 import { GetOrdersDTO, CreateOrderDTO } from 'src/dto/order.dto';
-import { ItemService } from 'src/item/item.service';
+import { ItemService } from '../item/item.service';
 import { Order } from 'src/schemes/order.schema';
+import { UserService } from '../user/user.service';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class OrderService {
   constructor(
-    private orderModel: Model<Order>,
-    private userService: UserServie,
+    @InjectModel(Order.name) private orderModel: Model<Order>,
+    private userService: UserService,
     private itemService: ItemService,
   ) {}
 
   async createOrder(dto: CreateOrderDTO) {
     const existingUser = await this.userService.findOne(dto.userId);
     if (!existingUser) throw new BadRequestException();
+    const existingItem = await this.itemService.findOne(dto.itemId);
+    if (!existingItem) throw new BadRequestException();
     const createdOrder = this.orderModel.create({
       _id: new mongoose.Types.ObjectId(),
       itemId: new mongoose.Types.ObjectId(dto.itemId),

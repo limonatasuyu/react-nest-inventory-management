@@ -11,16 +11,18 @@ import {
   DeleteCategoryDTO,
 } from 'src/dto/categories.dto';
 import { Category } from 'src/schemes/category.schema';
+import { UserService } from '../user/user.service';
+import { InjectModel } from '@nestjs/mongoose';
 
-@Injectable()
+Injectable();
 export class CategoryService {
   constructor(
-    private categoryModel: Model<Category>,
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
     private userService: UserService,
   ) {}
 
   async deleteCategory(dto: DeleteCategoryDTO) {
-    const existinguser = await this.userService.findOnde(dto.userId);
+    const existinguser = await this.userService.findOne(dto.userId);
     if (!existinguser) throw new BadRequestException();
     const updatedCategory = await this.categoryModel.updateOne(
       {
@@ -39,7 +41,7 @@ export class CategoryService {
   }
 
   async updateCategory(dto: UpdateCategoryDTO) {
-    const existinguser = await this.userService.findOnde(dto.userId);
+    const existinguser = await this.userService.findOne(dto.userId);
     if (!existinguser) throw new BadRequestException();
     const updatedCategory = await this.categoryModel.updateOne(
       {
@@ -60,7 +62,7 @@ export class CategoryService {
   }
 
   async createCategory(dto: CreateCategoryDTO) {
-    const existinguser = await this.userService.findOnde(dto.userId);
+    const existinguser = await this.userService.findOne(dto.userId);
     if (!existinguser) throw new BadRequestException();
     const createdCategory = await this.categoryModel.create({
       _id: new mongoose.Types.ObjectId(),
@@ -134,5 +136,12 @@ export class CategoryService {
 
     if (!categories.length) throw new InternalServerErrorException();
     return { ...categories[0], message: 'Categories received successfully.' };
+  }
+
+  async findOne(id: string) {
+    const category = await this.categoryModel.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+    });
+    return category?.toObject();
   }
 }

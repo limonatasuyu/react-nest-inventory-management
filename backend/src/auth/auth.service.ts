@@ -7,6 +7,8 @@ import {
 import { LoginDTO, RegisterDTO } from 'src/dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { UserService } from '../user/user.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -19,14 +21,14 @@ export class AuthService {
     const user = await this.userService.findByEmail(dto.email);
     if (!user) throw new BadRequestException('Email or password is incorrect.');
 
-    const { password, _id, username } = user;
+    const { password, _id, email } = user;
 
     const isPasswordsMatch = await compare(dto.password, password);
 
     if (!isPasswordsMatch) {
       throw new UnauthorizedException('Email or password is incorrect.');
     }
-    const payload = { sub: _id, username };
+    const payload = { sub: _id, email };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -49,12 +51,18 @@ export class AuthService {
         "Password can't be shorter then 6 or longer then 20 characters",
       );
 
-    const createdUser = await this.userService.create(
-      dto.firstname,
-      dto.lastname,
-      dto.email,
-      dto.password,
-    );
+    const existingUser = await this.userService.findByEmail(dto.email);
+    if (existingUser) throw new BadRequestException('Email is already in use.');
+
+    const saltRounds = 10;
+    const encryptedPassword = await bcrypt.hash(dto.password, saltRounds);
+
+    const createdUser = await this.userService.create({
+      firstname: dto.firstname,
+      lastname: dto.lastname,
+      email: dto.email,
+      password: encryptedPassword,
+    });
 
     if (!createdUser) throw new InternalServerErrorException();
 
