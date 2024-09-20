@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import {
@@ -15,7 +16,9 @@ import {
   GetCategoriesDTO,
   UpdateCategoryDTO,
 } from 'src/dto/categories.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('category')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
@@ -31,13 +34,16 @@ export class CategoryController {
   }
 
   @Post()
-  async createCategory(@Body() dto: CreateCategoryDTO) {
-    return await this.categoryService.createCategory(dto);
+  async createCategory(@Body() body: CreateCategoryDTO, @Request() req) {
+    return await this.categoryService.createCategory({
+      ...body,
+      userId: req.user.sub,
+    });
   }
 
   @Put()
-  async updateCategory(@Body() dto: UpdateCategoryDTO) {
-    return await this.categoryService.updateCategory(dto);
+  async updateCategory(@Body() dto: UpdateCategoryDTO, @Request() req) {
+    return await this.categoryService.updateCategory({...dto, userId: req.user.sub});
   }
 
   @Delete(':id')

@@ -118,7 +118,7 @@ export class ItemService {
           as: 'category',
         },
       },
-      { $unwind: '$category' },
+      { $unwind: { path: '$category', preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
           from: 'suppliers',
@@ -127,7 +127,7 @@ export class ItemService {
           as: 'supplier',
         },
       },
-      { $unwind: '$supplier' },
+      { $unwind: { path: '$supplier', preserveNullAndEmptyArrays: true } },
       {
         $facet: {
           items: [

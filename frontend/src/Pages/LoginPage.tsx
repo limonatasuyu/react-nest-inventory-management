@@ -17,17 +17,21 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import logo from "/logo.png";
 import { loginSchema, LoginSchema } from "../validators/auth-validators";
 import forklift from "/forklift.png";
-import { Link } from "react-router-dom";
-import axios from 'axios';
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const formik = useFormik<LoginSchema>({
     initialValues: { email: "", password: "" },
     onSubmit: (values) => {
-      axios.post('http://localhost:3000/auth/login', values).then(res => {
-        console.log('res: ', res)
-      })
+      axios.post("http://localhost:3000/auth/login", values).then((res) => {
+        if (res.data.access_token) {
+          window.sessionStorage.setItem("access_token", res.data.access_token);
+          navigate("/");
+        }
+      });
     },
     validationSchema: loginSchema,
   });
@@ -141,9 +145,7 @@ export default function LoginPage() {
                   Login
                 </Button>
                 <Link to="/register">
-                  <Button variant="contained">
-                    Register
-                  </Button>
+                  <Button variant="contained">Register</Button>
                 </Link>
               </Box>
             </Box>

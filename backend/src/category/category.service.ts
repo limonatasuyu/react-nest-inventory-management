@@ -55,6 +55,7 @@ export class CategoryService {
         updatedBy: new mongoose.Types.ObjectId(dto.userId),
       },
     );
+
     if (!updatedCategory || !updatedCategory.modifiedCount)
       throw new InternalServerErrorException();
 
@@ -94,7 +95,7 @@ export class CategoryService {
       { $match: { isArchived: false } },
       {
         $facet: {
-          items: [
+          categories: [
             {
               $project: {
                 _id: 1,
