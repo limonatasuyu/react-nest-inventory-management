@@ -21,6 +21,11 @@ export class ItemController {
     return await this.itemService.getItems(dto);
   }
 
+  @Get('select')
+  async getItemsSelect() {
+    return await this.itemService.getItemsSelect();
+  }
+
   @Post()
   async createItem(@Body() dto: CreateItemDTO) {
     return await this.itemService.createItem(dto);

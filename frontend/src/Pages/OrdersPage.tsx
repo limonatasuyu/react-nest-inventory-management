@@ -2,18 +2,17 @@ import { Box, Typography } from "@mui/material";
 import { DataGrid, GridSortModel } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CreateItemModal from "../Components/pageComponents/Items/CreateItemModal";
-import EditItemModal from "../Components/pageComponents/Items/EditItemModal";
-import DeleteItemModal from "../Components/pageComponents/Items/DeleteItemModal";
-import { ItemData } from "../interfaces";
+import CreateOrderModal from "../Components/pageComponents/Orders/CreateOrderModal";
+import EditOrderModal from "../Components/pageComponents/Orders/EditOrderModal";
+import DeleteOrderModal from "../Components/pageComponents/Orders/DeleteOrderModal";
+import { OrderData } from "../interfaces";
 
-export default function ItemsPage() {
+export default function OrdersPage() {
   const [data, setData] = useState<{
-    items: ItemData[];
+    orders: OrderData[];
     totalRecordCount: { count: number }[];
-  }>({ items: [], totalRecordCount: [{ count: 1 }] });
-  const [categoriesData, setCategoriesData] = useState([]);
-  const [suppliersData, setSuppliersData] = useState([]);
+  }>({ orders: [], totalRecordCount: [{ count: 1 }] });
+  const [itemsData, setItemsData] = useState([]);
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -22,39 +21,31 @@ export default function ItemsPage() {
 
   const [sortingModel, setSortingModel] = useState({
     sortBy: "createdAt",
-    sortItem: "asc",
+    sortOrder: "asc",
   });
 
   function handleSortModelChange(sortModel: GridSortModel) {
     if (!sortModel[0]) {
       setSortingModel({
         sortBy: "createdAt",
-        sortItem: "asc",
+        sortOrder: "asc",
       });
       return;
     }
     setSortingModel({
       sortBy: sortModel[0].field,
-      sortItem: sortModel[0].sort as string,
+      sortOrder: sortModel[0].sort as string,
     });
   }
 
   async function fetchItemsSelect() {
     const token = window.sessionStorage.getItem("access_token");
     axios
-      .get("http://localhost:3000/category/select", {
+      .get("http://localhost:3000/order/select", {
         headers: { Authorization: "Bearer " + token },
       })
       .then((res) => {
-        setCategoriesData(res.data);
-      });
-  
-    axios
-      .get("http://localhost:3000/supplier/select", {
-        headers: { Authorization: "Bearer " + token },
-      })
-      .then((res) => {
-        setSuppliersData(res.data);
+        setItemsData(res.data);
       });
   }
 
@@ -62,9 +53,9 @@ export default function ItemsPage() {
     const token = window.sessionStorage.getItem("access_token");
     axios
       .get(
-        `http://localhost:3000/item?page=${paginationModel.page + 1}&sortBy=${
+        `http://localhost:3000/order?page=${paginationModel.page + 1}&sortBy=${
           sortingModel.sortBy
-        }&sortItem=${sortingModel.sortItem}`,
+        }&sortOrder=${sortingModel.sortOrder}`,
         { headers: { Authorization: "Bearer " + token } }
       )
       .then((res) => {
@@ -98,10 +89,10 @@ export default function ItemsPage() {
       headerName: "Actions",
       cellClassName: "actions",
       flex: 1,
-      getActions: ({ row }: { row: ItemData }) => {
+      getActions: ({ row }: { row: OrderData }) => {
         return [
-          <EditItemModal item={row} mutate={fetchData} categories={categoriesData} suppliers={suppliersData}/>,
-          <DeleteItemModal item={row} mutate={fetchData} />,
+          <EditOrderModal order={row} mutate={fetchData} items={itemsData}/>,
+          <DeleteOrderModal order={row} mutate={fetchData} />,
         ];
       },
     },
@@ -113,23 +104,23 @@ export default function ItemsPage() {
         sx={{ justifyContent: "space-between", alignItems: "center" }}
       >
         <Box>
-          <Typography variant="h1">Items</Typography>
+          <Typography variant="h1">Orders</Typography>
           <Typography variant="h6">
-            You can see items and stuff from this page
+            You can see orders and stuff from this page
           </Typography>
         </Box>
         <Box sx={{ mr: 10 }}>
-          <CreateItemModal mutate={fetchData} categories={categoriesData} suppliers={suppliersData}/>
+          <CreateOrderModal mutate={fetchData} items={itemsData}/>
         </Box>
       </Box>
       <DataGrid
         getRowId={(i) => i._id}
         //@ts-expect-error does not accept the action column for some reason
         columns={columns}
-        rows={data.items}
+        rows={data.orders}
         autoHeight
         sx={{ alignSelf: "center", mt: 10, width: "90%" }}
-        rowCount={data.totalRecordCount[0]?.count ?? 1}
+        rowCount={data.totalRecordCount[0].count}
         paginationMode="server"
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}

@@ -101,10 +101,11 @@ export class CategoryService {
                 _id: 1,
                 name: 1,
                 description: 1,
+                createdAt: 1,
               },
             },
             {
-              $sort: { [dto.sortBy]: dto.sortOrder === 'ascending' ? 1 : -1 },
+              $sort: { [dto.sortBy]: dto.sortOrder === 'asc' ? 1 : -1 },
             },
             {
               $skip: (dto.page - 1) * pageSize,
@@ -114,23 +115,6 @@ export class CategoryService {
             },
           ],
           totalRecordCount: [{ $count: 'count' }],
-        },
-      },
-      {
-        $addFields: {
-          totalPageCount: {
-            $ifNull: [
-              {
-                $ceil: {
-                  $divide: [
-                    { $arrayElemAt: ['$totalRecordCount.count', 0] },
-                    pageSize,
-                  ],
-                },
-              },
-              1,
-            ],
-          },
         },
       },
     ]);

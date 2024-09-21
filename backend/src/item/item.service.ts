@@ -107,6 +107,16 @@ export class ItemService {
     return { message: 'Item updated successfully.' };
   }
 
+  async getItemsSelect() {
+    const items = await this.itemsModel
+      .find({
+        isArchived: false,
+      })
+      .populate('_id name');
+    if (!items) throw new InternalServerErrorException();
+    return items;
+  }
+
   async getItems(dto: GetItemsDTO) {
     const pageSize = 10;
     const items = await this.itemsModel.aggregate([
@@ -159,23 +169,6 @@ export class ItemService {
             },
           ],
           totalRecordCount: [{ $count: 'count' }],
-        },
-      },
-      {
-        $addFields: {
-          totalPageCount: {
-            $ifNull: [
-              {
-                $ceil: {
-                  $divide: [
-                    { $arrayElemAt: ['$totalRecordCount.count', 0] },
-                    pageSize,
-                  ],
-                },
-              },
-              1,
-            ],
-          },
         },
       },
     ]);

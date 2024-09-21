@@ -1,7 +1,7 @@
 export interface GetCategoriesDTO {
   page: number;
-  sortBy: 'name' | 'createdAt' | 'updatedAt';
-  sortOrder: 'ascending' | 'descending';
+  sortBy: 'name' | 'description' | 'createdAt';
+  sortOrder: 'asc' | 'desc';
 }
 
 export interface CreateCategoryDTO {

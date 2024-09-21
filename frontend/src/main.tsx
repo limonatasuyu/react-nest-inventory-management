@@ -8,6 +8,9 @@ import RegisterPage from "./Pages/RegisterPage";
 import HomePage from "./Pages/HomePage";
 import ItemsPage from "./Pages/ItemsPage";
 import CategoriesPage from "./Pages/CategoriesPage";
+import OrdersPage from "./Pages/OrdersPage";
+import SuppliersPage from "./Pages/SuppliersPage";
+import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter(
   [
@@ -15,12 +18,12 @@ const router = createBrowserRouter(
       element: <AuthLayout />,
       children: [
         {
-          path: '/login',
+          path: "/login",
           element: <LoginPage />,
         },
         {
-          path: '/register',
-          element: <RegisterPage />
+          path: "/register",
+          element: <RegisterPage />,
         },
       ],
     },
@@ -28,19 +31,27 @@ const router = createBrowserRouter(
       element: <AppLayout />,
       children: [
         {
-          path: '/',
-          element: <HomePage />
+          path: "/",
+          element: <HomePage />,
         },
         {
-          path: '/items',
-          element: <ItemsPage />
+          path: "/items",
+          element: <ItemsPage />,
         },
         {
-          path: '/categories',
-          element: <CategoriesPage />
-        }
-      ]
-    }
+          path: "/categories",
+          element: <CategoriesPage />,
+        },
+        {
+          path: "/orders",
+          element: <OrdersPage />,
+        },
+        {
+          path: "/suppliers",
+          element: <SuppliersPage />,
+        },
+      ],
+    },
   ],
   { basename: "/" }
 );
@@ -49,4 +60,9 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-root.render(<RouterProvider router={router} />);
+root.render(
+  <div>
+    <RouterProvider router={router} />
+    <Toaster />
+  </div>
+);

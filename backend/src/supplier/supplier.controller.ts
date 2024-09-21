@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { SupplierService } from './supplier.service';
 import {
@@ -15,7 +16,9 @@ import {
   GetSuppliersDTO,
   UpdateSupplierDTO,
 } from 'src/dto/supplier.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('supplier')
 export class SupplierController {
   constructor(private supplierService: SupplierService) {}
@@ -31,13 +34,19 @@ export class SupplierController {
   }
 
   @Post()
-  async createSupplier(@Body() dto: CreateSupplierDTO) {
-    return await this.supplierService.createSupplier(dto);
+  async createSupplier(@Body() dto: CreateSupplierDTO, @Request() req) {
+    return await this.supplierService.createSupplier({
+      ...dto,
+      userId: req.user.sub,
+    });
   }
 
   @Put()
-  async updateSupplier(@Body() dto: UpdateSupplierDTO) {
-    return await this.supplierService.updateSupplier(dto);
+  async updateSupplier(@Body() dto: UpdateSupplierDTO, @Request() req) {
+    return await this.supplierService.updateSupplier({
+      ...dto,
+      userId: req.user.sub,
+    });
   }
 
   @Delete(':id')

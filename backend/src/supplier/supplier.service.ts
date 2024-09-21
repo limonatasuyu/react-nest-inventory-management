@@ -78,7 +78,7 @@ export class SupplierService {
       .find({ isArchived: false })
       .populate('_id name');
     if (!suppliers) throw new InternalServerErrorException();
-    return { suppliers };
+    return suppliers;
   }
 
   async getSuppliers(dto: GetSuppliersDTO) {
@@ -87,13 +87,14 @@ export class SupplierService {
       { $match: { isArchived: false } },
       {
         $facet: {
-          items: [
+          suppliers: [
             {
               $project: {
                 _id: 1,
                 name: 1,
                 contactInfo: 1,
                 address: 1,
+                createdAt: 1,
               },
             },
             {
@@ -107,23 +108,6 @@ export class SupplierService {
             },
           ],
           totalRecordCount: [{ $count: 'count' }],
-        },
-      },
-      {
-        $addFields: {
-          totalPageCount: {
-            $ifNull: [
-              {
-                $ceil: {
-                  $divide: [
-                    { $arrayElemAt: ['$totalRecordCount.count', 0] },
-                    pageSize,
-                  ],
-                },
-              },
-              1,
-            ],
-          },
         },
       },
     ]);

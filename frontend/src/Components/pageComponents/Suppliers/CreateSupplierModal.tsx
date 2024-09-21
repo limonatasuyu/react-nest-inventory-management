@@ -1,26 +1,49 @@
 import { Button, Modal, Box, Typography, TextField } from "@mui/material";
 import { useFormik } from "formik";
-import { useState } from "react";
-import { CategorySchema, categorySchema } from "../validators/category-validator";
+import { useEffect, useState } from "react";
+import {
+  SupplierSchema,
+  supplierSchema,
+} from "../../../validators/supplier-validator";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-export default function CreateCategoryModal() {
+export default function CreateSupplierModal({
+  mutate,
+}: {
+  mutate: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
-  const formik = useFormik<CategorySchema>({
-    initialValues: { name: "", description: "" },
+  const formik = useFormik<SupplierSchema>({
+    initialValues: { name: "", contactInfo: "", address: "" },
     onSubmit: async (values) => {
-      const token = window.sessionStorage.getItem('access_token')
-      await axios.post('http://localhost:3000/category', values, {  headers: { Authorization: 'Bearer ' + token }}).then(() => {setOpen(false)})
+      const token = window.sessionStorage.getItem("access_token");
+      await axios
+        .post("http://localhost:3000/supplier", values, {
+          headers: { Authorization: "Bearer " + token },
+        })
+        .then(() => {
+          setOpen(false);
+          toast.success("Supplier created succesfully.");
+          mutate();
+        })
+        .catch((err) => {
+          toast.error(err);
+        });
       formik.setSubmitting(false);
     },
-    validationSchema: categorySchema
+    validationSchema: supplierSchema,
   });
+
+  useEffect(() => {
+    formik.resetForm();
+  }, [open]);
 
   return (
     <>
       <Button onClick={() => setOpen(true)} variant="contained">
-        Create New Category
+        Create New Supplier
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
@@ -35,7 +58,7 @@ export default function CreateCategoryModal() {
             p: 4,
           }}
         >
-          <Typography variant="h4">Create Category</Typography>
+          <Typography variant="h4">Create Supplier</Typography>
           <form onSubmit={formik.handleSubmit} style={{ marginTop: "1rem" }}>
             <Box display="flex" sx={{ flexDirection: "column", gap: 2 }}>
               <TextField
@@ -47,19 +70,32 @@ export default function CreateCategoryModal() {
                 helperText={formik.touched.name && formik.errors.name}
               />
               <TextField
-                label="Description"
-                name="description"
+                label="Contact Information"
+                name="contactInfo"
                 onChange={formik.handleChange}
-                value={formik.values.description}
+                value={formik.values.contactInfo}
                 error={Boolean(
-                  formik.touched.description && formik.errors.description
+                  formik.touched.contactInfo && formik.errors.contactInfo
                 )}
                 helperText={
-                  formik.touched.description && formik.errors.description
+                  formik.touched.contactInfo && formik.errors.contactInfo
                 }
               />
+              <TextField
+                label="Address"
+                name="address"
+                onChange={formik.handleChange}
+                value={formik.values.address}
+                error={Boolean(formik.touched.address && formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
+              />
               <Box display="flex" sx={{ gap: 1, justifyContent: "center" }}>
-                <Button variant="contained" color="success" type="submit" disabled={formik.isSubmitting}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  type="submit"
+                  disabled={formik.isSubmitting}
+                >
                   Create
                 </Button>
                 <Button

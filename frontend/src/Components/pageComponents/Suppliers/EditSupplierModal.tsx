@@ -1,34 +1,58 @@
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Button, Modal, Box, Typography, TextField } from "@mui/material";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  CategorySchema,
-  categorySchema,
-} from "../validators/category-validator";
+  SupplierSchema,
+  supplierSchema,
+} from "../../../validators/supplier-validator";
 import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
-import { CategoryData } from "../interfaces";
+import { SupplierData } from "../../../interfaces";
+import toast from "react-hot-toast";
 
-export default function EditCategoryModal({ category }: { category: CategoryData }) {
+export default function EditSupplierModal({
+  supplier,
+  mutate,
+}: {
+  supplier: SupplierData;
+  mutate: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
-  console.log('category: ', category)
-  const formik = useFormik<CategorySchema>({
-    initialValues: { name: category.name, description: category.description },
+  console.log("supplier: ", supplier);
+  const formik = useFormik<SupplierSchema>({
+    initialValues: {
+      name: supplier.name,
+      contactInfo: supplier.contactInfo,
+      address: supplier.address,
+    },
     onSubmit: async (values) => {
       const token = window.sessionStorage.getItem("access_token");
       await axios
-        .put("http://localhost:3000/category/", {...values, categoryId: category._id}, {
-          headers: { Authorization: "Bearer " + token },
-        })
+        .put(
+          "http://localhost:3000/supplier/",
+          { ...values, supplierId: supplier._id },
+          {
+            headers: { Authorization: "Bearer " + token },
+          }
+        )
         .then(() => {
           setOpen(false);
+          toast.success("Supplier updated succesfully.");
+          mutate();
+        })
+        .catch((err) => {
+          toast.error(err);
         });
       formik.setSubmitting(false);
     },
-    validationSchema: categorySchema,
+    validationSchema: supplierSchema,
   });
+
+  useEffect(() => {
+    formik.resetForm();
+  }, [open]);
 
   return (
     <>
@@ -41,7 +65,6 @@ export default function EditCategoryModal({ category }: { category: CategoryData
         }}
         onClick={() => setOpen(true)}
       />
-      ,
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{
@@ -55,7 +78,7 @@ export default function EditCategoryModal({ category }: { category: CategoryData
             p: 4,
           }}
         >
-          <Typography variant="h4">Edit Category</Typography>
+          <Typography variant="h4">Edit Supplier</Typography>
           <form onSubmit={formik.handleSubmit} style={{ marginTop: "1rem" }}>
             <Box display="flex" sx={{ flexDirection: "column", gap: 2 }}>
               <TextField
@@ -67,16 +90,24 @@ export default function EditCategoryModal({ category }: { category: CategoryData
                 helperText={formik.touched.name && formik.errors.name}
               />
               <TextField
-                label="Description"
-                name="description"
+                label="Contact Information"
+                name="contactInfo"
                 onChange={formik.handleChange}
-                value={formik.values.description}
+                value={formik.values.contactInfo}
                 error={Boolean(
-                  formik.touched.description && formik.errors.description
+                  formik.touched.contactInfo && formik.errors.contactInfo
                 )}
                 helperText={
-                  formik.touched.description && formik.errors.description
+                  formik.touched.contactInfo && formik.errors.contactInfo
                 }
+              />
+              <TextField
+                label="Address"
+                name="address"
+                onChange={formik.handleChange}
+                value={formik.values.address}
+                error={Boolean(formik.touched.address && formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
               />
               <Box display="flex" sx={{ gap: 1, justifyContent: "center" }}>
                 <Button
@@ -85,7 +116,7 @@ export default function EditCategoryModal({ category }: { category: CategoryData
                   type="submit"
                   disabled={formik.isSubmitting}
                 >
-                  Create
+                  Edit
                 </Button>
                 <Button
                   variant="contained"
