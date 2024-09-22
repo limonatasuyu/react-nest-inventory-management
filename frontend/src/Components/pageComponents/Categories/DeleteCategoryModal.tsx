@@ -25,6 +25,7 @@ export default function DeleteCategoryModal({
     axios
       .delete("http://localhost:3000/category/" + category._id, {
         headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
       })
       .then(() => {
         setOpen(false);

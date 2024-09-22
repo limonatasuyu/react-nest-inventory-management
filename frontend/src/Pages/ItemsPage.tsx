@@ -45,6 +45,7 @@ export default function ItemsPage() {
     axios
       .get("http://localhost:3000/category/select", {
         headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
       })
       .then((res) => {
         setCategoriesData(res.data);
@@ -53,6 +54,7 @@ export default function ItemsPage() {
     axios
       .get("http://localhost:3000/supplier/select", {
         headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
       })
       .then((res) => {
         setSuppliersData(res.data);
@@ -66,7 +68,7 @@ export default function ItemsPage() {
         `http://localhost:3000/item?page=${paginationModel.page + 1}&sortBy=${
           sortingModel.sortBy
         }&sortItem=${sortingModel.sortItem}`,
-        { headers: { Authorization: "Bearer " + token } }
+        { headers: { Authorization: "Bearer " + token }, withCredentials: true }
       )
       .then((res) => {
         setData(res.data);

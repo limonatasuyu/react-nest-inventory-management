@@ -12,6 +12,9 @@ export class Order {
   @Prop({ required: true, ref: 'Item' })
   itemId: mongoose.Schema.Types.ObjectId;
 
+  @Prop({ required: true, ref: 'SupplierId' })
+  supplierId: mongoose.Schema.Types.ObjectId;
+
   @Prop({ required: true })
   quantity: number;
 

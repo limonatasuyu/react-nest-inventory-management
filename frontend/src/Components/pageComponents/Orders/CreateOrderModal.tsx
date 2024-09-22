@@ -22,19 +22,22 @@ import { getCookie } from "../../../utils";
 export default function CreateOrderModal({
   mutate,
   items,
+  suppliers
 }: {
   mutate: () => void;
   items: { name: string; _id: string }[];
+  suppliers: { name: string; _id: string }[];
 }) {
   const [open, setOpen] = useState(false);
 
   const formik = useFormik<OrderSchema>({
-    initialValues: { itemId: "", quantity: 0, dateOrdered: dayjs(new Date()) as unknown as Date },
+    initialValues: { itemId: "", supplierId: "", quantity: 0, dateOrdered: dayjs(new Date()) as unknown as Date },
     onSubmit: async (values) => {
       const token = getCookie("access_token");
       await axios
         .post("http://localhost:3000/order", values, {
           headers: { Authorization: "Bearer " + token },
+          withCredentials: true,
         })
         .then(() => {
           setOpen(false);
@@ -74,6 +77,27 @@ export default function CreateOrderModal({
           <Typography variant="h4">Create Order</Typography>
           <form onSubmit={formik.handleSubmit} style={{ marginTop: "1rem" }}>
             <Box display="flex" sx={{ flexDirection: "column", gap: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel id="supplier-select-label">Supplier</InputLabel>
+                <Select
+                  labelId="supplier-select-label"
+                  id="supplier-select"
+                  value={formik.values.supplierId}
+                  label="Supplier"
+                  name="supplierId"
+                  onChange={formik.handleChange}
+                  error={Boolean(formik.touched.supplierId && formik.errors.supplierId)}
+                >
+                  {suppliers.map((item: { name: string; _id: string }) => (
+                    <MenuItem value={item._id}>{item.name}</MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText
+                  error={Boolean(formik.touched.supplierId && formik.errors.supplierId)}
+                >
+                  {formik.touched.supplierId && formik.errors.supplierId}
+                </FormHelperText>
+              </FormControl>
               <FormControl fullWidth>
                 <InputLabel id="item-select-label">Item</InputLabel>
                 <Select

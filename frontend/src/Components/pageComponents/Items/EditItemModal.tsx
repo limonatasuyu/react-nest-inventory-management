@@ -50,6 +50,7 @@ export default function EditItemModal({
           { ...values, itemId: item._id },
           {
             headers: { Authorization: "Bearer " + token },
+            withCredentials: true
           }
         )
         .then(() => {

@@ -45,7 +45,7 @@ export default function CategoriesPage() {
         `http://localhost:3000/category?page=${
           paginationModel.page + 1
         }&sortBy=${sortingModel.sortBy}&sortOrder=${sortingModel.sortOrder}`,
-        { headers: { Authorization: "Bearer " + token } }
+        { headers: { Authorization: "Bearer " + token }, withCredentials: true }
       )
       .then((res) => {
         setData(res.data);
@@ -108,7 +108,7 @@ export default function CategoriesPage() {
         rows={data.categories}
         autoHeight
         sx={{ alignSelf: "center", mt: 10, width: "90%" }}
-        rowCount={data.totalRecordCount[0].count}
+        rowCount={data.totalRecordCount[0]?.count ?? 0}
         paginationMode="server"
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}

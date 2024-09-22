@@ -9,6 +9,7 @@ import { ItemService } from '../item/item.service';
 import { Order } from 'src/schemes/order.schema';
 import { UserService } from '../user/user.service';
 import { InjectModel } from '@nestjs/mongoose';
+import { SupplierService } from 'src/supplier/supplier.service';
 
 @Injectable()
 export class OrderService {
@@ -16,6 +17,7 @@ export class OrderService {
     @InjectModel(Order.name) private orderModel: Model<Order>,
     private userService: UserService,
     private itemService: ItemService,
+    private supplierService: SupplierService,
   ) {}
 
   async createOrder(dto: CreateOrderDTO) {
@@ -23,11 +25,14 @@ export class OrderService {
     if (!existingUser) throw new BadRequestException();
     const existingItem = await this.itemService.findOne(dto.itemId);
     if (!existingItem) throw new BadRequestException();
+    const existingSupplier = await this.supplierService.findOne(dto.supplierId);
+    if (!existingSupplier) throw new BadRequestException();
     const createdOrder = this.orderModel.create({
       _id: new mongoose.Types.ObjectId(),
       itemId: new mongoose.Types.ObjectId(dto.itemId),
       quantity: dto.quantity,
       dateOrdered: new Date(dto.dateOrdered),
+      supplierId: new mongoose.Types.ObjectId(dto.supplierId),
       status: 'pending',
       createdAt: new Date(),
       createdBy: new mongoose.Types.ObjectId(dto.userId),
@@ -45,6 +50,15 @@ export class OrderService {
       { $match: { isArchived: false } },
       {
         $lookup: {
+          from: 'suppliers',
+          localField: 'supplierId',
+          foreignField: '_id',
+          as: 'supplier',
+        },
+      },
+      { $unwind: '$supplier' },
+      {
+        $lookup: {
           from: 'items',
           localField: 'itemId',
           foreignField: '_id',
@@ -59,6 +73,10 @@ export class OrderService {
               $project: {
                 _id: 1,
                 item: {
+                  _id: 1,
+                  name: 1,
+                },
+                supplier: {
                   _id: 1,
                   name: 1,
                 },
@@ -102,5 +120,55 @@ export class OrderService {
 
     if (!orders || !orders.length) throw new InternalServerErrorException();
     return { ...orders[0], message: 'Orders received succesfully.' };
+  }
+
+  async getTotalCount() {
+    const orders = await this.orderModel.find({ isArchived: false });
+    return orders?.length ?? 0;
+  }
+
+  async getPendingOrders() {
+    const orders = await this.orderModel.aggregate([
+      {
+        $match: {
+          isArchived: false,
+          status: 'pending',
+        },
+      },
+      {
+        $lookup: {
+          from: 'items',
+          localField: 'itemId',
+          foreignField: '_id',
+          as: 'item',
+        },
+      },
+      { $unwind: '$item' },
+      {
+        $lookup: {
+          from: 'suppliers',
+          localField: 'supplierId',
+          foreignField: '_id',
+          as: 'supplier',
+        },
+      },
+      { $unwind: '$supplier' },
+      {
+        $project: {
+          _id: 1,
+          quantity: 1,
+          item: {
+            name: 1,
+            _id: 1,
+          },
+          supplier: {
+            name: 1,
+            _id: 1,
+          },
+        },
+      },
+    ]);
+
+    return orders ?? [];
   }
 }

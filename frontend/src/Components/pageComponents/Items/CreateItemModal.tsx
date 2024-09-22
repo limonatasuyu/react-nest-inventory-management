@@ -42,6 +42,7 @@ export default function CreateItemModal({
       await axios
         .post("http://localhost:3000/item", values, {
           headers: { Authorization: "Bearer " + token },
+          withCredentials: true,
         })
         .then(() => {
           setOpen(false);

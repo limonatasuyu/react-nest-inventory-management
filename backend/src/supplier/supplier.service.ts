@@ -124,4 +124,9 @@ export class SupplierService {
     });
     return category?.toObject();
   }
+
+  async getTotalCount() {
+    const suppliers = await this.supplierModel.find({ isArchived: false });
+    return suppliers?.length ?? 0;
+  }
 }

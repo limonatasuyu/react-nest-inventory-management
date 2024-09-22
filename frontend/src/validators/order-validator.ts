@@ -2,6 +2,7 @@ import * as yup from "yup";
 import dayjs from "dayjs";
 
 export const orderSchema = yup.object({
+  supplierId: yup.string().required("Supplier is required."),
   itemId: yup.string().required("Item is required."),
   quantity: yup
     .number()

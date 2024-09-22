@@ -11,7 +11,7 @@ import CreateOrderModal from "../Components/pageComponents/Orders/CreateOrderMod
 import EditOrderModal from "../Components/pageComponents/Orders/EditOrderModal";
 import DeleteOrderModal from "../Components/pageComponents/Orders/DeleteOrderModal";
 import { OrderData } from "../interfaces";
-import { getCookie } from '../utils'
+import { getCookie } from "../utils";
 
 export default function OrdersPage() {
   const [data, setData] = useState<{
@@ -19,6 +19,7 @@ export default function OrdersPage() {
     totalRecordCount: { count: number }[];
   }>({ orders: [], totalRecordCount: [{ count: 1 }] });
   const [itemsData, setItemsData] = useState([]);
+  const [suppliersData, setSuppliersData] = useState([]);
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -49,9 +50,18 @@ export default function OrdersPage() {
     axios
       .get("http://localhost:3000/item/select", {
         headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
       })
       .then((res) => {
         setItemsData(res.data);
+      });
+    axios
+      .get("http://localhost:3000/supplier/select", {
+        headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
+      })
+      .then((res) => {
+        setSuppliersData(res.data);
       });
   }
 
@@ -62,7 +72,7 @@ export default function OrdersPage() {
         `http://localhost:3000/order?page=${paginationModel.page + 1}&sortBy=${
           sortingModel.sortBy
         }&sortOrder=${sortingModel.sortOrder}`,
-        { headers: { Authorization: "Bearer " + token } }
+        { headers: { Authorization: "Bearer " + token }, withCredentials: true, }
       )
       .then((res) => {
         setData(res.data);
@@ -78,6 +88,12 @@ export default function OrdersPage() {
     {
       field: "item",
       headerName: "Item",
+      flex: 1,
+      valueGetter: (val: { name: string }) => val.name,
+    },
+    {
+      field: "supplier",
+      headerName: "Supplier",
       flex: 1,
       valueGetter: (val: { name: string }) => val.name,
     },
@@ -122,7 +138,7 @@ export default function OrdersPage() {
       flex: 1,
       getActions: ({ row }: { row: OrderData }) => {
         return [
-          <EditOrderModal order={row} mutate={fetchData} items={itemsData} />,
+          <EditOrderModal order={row} mutate={fetchData} items={itemsData} suppliers={suppliersData} />,
           <DeleteOrderModal order={row} mutate={fetchData} />,
         ];
       },
@@ -141,7 +157,7 @@ export default function OrdersPage() {
           </Typography>
         </Box>
         <Box sx={{ mr: 10 }}>
-          <CreateOrderModal mutate={fetchData} items={itemsData} />
+          <CreateOrderModal mutate={fetchData} items={itemsData} suppliers={suppliersData} />
         </Box>
       </Box>
       <DataGrid

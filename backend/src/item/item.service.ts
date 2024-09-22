@@ -188,4 +188,20 @@ export class ItemService {
     });
     return item?.toObject();
   }
+
+  async getTotalCount() {
+    const items = await this.itemsModel.find({ isArchived: false });
+    return items?.length ?? 0;
+  }
+
+  async getLowStockItems() {
+    const lowStockTreshold = 10;
+    const items = await this.itemsModel
+      .find({
+        isArchived: false,
+        quantity: { $lt: lowStockTreshold },
+      }, '_id name price quantity')
+      .limit(10)
+    return items ?? [];
+  }
 }

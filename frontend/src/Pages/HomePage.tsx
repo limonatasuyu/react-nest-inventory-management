@@ -1,5 +1,187 @@
-import { Box } from '@mui/material';
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Avatar,
+  Divider,
+} from "@mui/material";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { getCookie } from "../utils";
+import CategoryIcon from "@mui/icons-material/Category";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import WarningIcon from "@mui/icons-material/Warning";
+import PendingIcon from "@mui/icons-material/PendingActions";
+import { LowStockItemsModal } from "../Components/pageComponents/Dashboard/LowStockItemsModal";
+import { PendingOrdersModal } from "../Components/pageComponents/Dashboard/PendingOrdersModal";
 
 export default function HomePage() {
-  return <Box>Homepage</Box>
+  const [metrics, setMetrics] = useState<{
+    lowStockItems: {
+      name: string;
+      price: number;
+      quantity: number;
+      _id: string;
+    }[];
+    pendingOrders: {
+      item: { name: string; _id: string };
+      quantity: number;
+      supplier: { name: string; _id: string };
+      _id: string;
+    }[];
+    totalCategories: number;
+    totalItems: number;
+    totalOrders: number;
+    totalSuppliers: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const token = getCookie("access_token");
+    axios
+      .get("http://localhost:3000/metrics", {
+        headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (res.data) {
+          setMetrics(res.data);
+        }
+      });
+  }, []);
+
+  return (
+    <Box sx={{ padding: 4 }}>
+      <Grid container spacing={4}>
+        {/* Summary Cards */}
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: "#e3f2fd" }}>
+            <CardContent>
+              <Avatar sx={{ bgcolor: "#1976d2" }}>
+                <CategoryIcon />
+              </Avatar>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                Total Categories
+              </Typography>
+              <Typography variant="h4" color="textPrimary">
+                {metrics?.totalCategories || 0}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: "#ffebee" }}>
+            <CardContent>
+              <Avatar sx={{ bgcolor: "#d32f2f" }}>
+                <InventoryIcon />
+              </Avatar>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                Total Items
+              </Typography>
+              <Typography variant="h4" color="textPrimary">
+                {metrics?.totalItems || 0}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: "#e8f5e9" }}>
+            <CardContent>
+              <Avatar sx={{ bgcolor: "#388e3c" }}>
+                <ShoppingCartIcon />
+              </Avatar>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                Total Orders
+              </Typography>
+              <Typography variant="h4" color="textPrimary">
+                {metrics?.totalOrders || 0}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: "#f3e5f5" }}>
+            <CardContent>
+              <Avatar sx={{ bgcolor: "#8e24aa" }}>
+                <LocalShippingIcon />
+              </Avatar>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                Total Suppliers
+              </Typography>
+              <Typography variant="h4" color="textPrimary">
+                {metrics?.totalSuppliers || 0}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Low Stock Items */}
+        <Grid item xs={12} md={6}>
+          <Card sx={{ backgroundColor: "#fffde7" }}>
+            <CardContent>
+              <Avatar sx={{ bgcolor: "#fbc02d" }}>
+                <WarningIcon />
+              </Avatar>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                Low Stock Items
+              </Typography>
+              <List>
+                {metrics?.lowStockItems.slice(0, 3).map((item) => (
+                  <ListItem key={item._id}>
+                    <ListItemText
+                      primary={`name: ${item.name}  price: $${item.price}`}
+                      secondary={`Quantity: ${item.quantity}`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+              {metrics?.lowStockItems?.length as number > 3 && (
+                <LowStockItemsModal items={metrics?.lowStockItems ?? []} />
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Pending Orders */}
+        <Grid item xs={12} md={6}>
+          <Card sx={{ backgroundColor: "#e0f7fa" }}>
+            <CardContent>
+              <Avatar sx={{ bgcolor: "#00acc1" }}>
+                <PendingIcon />
+              </Avatar>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                Pending Orders
+              </Typography>
+              <List>
+                {metrics?.pendingOrders.slice(0, 3).map((order) => (
+                  <>
+                    <ListItem key={order._id}>
+                      <ListItemText
+                        primary={order.item.name}
+                        secondary={`Supplier: ${order.supplier.name}`}
+                      />
+                      Quantity: {order.quantity}
+                    </ListItem>
+                    <Divider />
+                  </>
+                ))}
+              </List>
+              {metrics?.pendingOrders?.length as number > 3 && (
+                <PendingOrdersModal orders={metrics?.pendingOrders ?? []} />
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 }

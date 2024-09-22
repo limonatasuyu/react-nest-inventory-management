@@ -26,15 +26,22 @@ export default function EditOrderModal({
   order,
   mutate,
   items,
+  suppliers,
 }: {
   order: OrderData;
   mutate: () => void;
   items: { name: string; _id: string }[];
+  suppliers: { name: string; _id: string }[];
 }) {
   const [open, setOpen] = useState(false);
 
   const formik = useFormik<OrderSchema>({
-    initialValues: { itemId: order.item._id, quantity: order.quantity, dateOrdered: dayjs(new Date(order.dateOrdered)) as unknown as Date },
+    initialValues: {
+      itemId: order.item._id,
+      supplierId: order.supplier._id,
+      quantity: order.quantity,
+      dateOrdered: dayjs(new Date(order.dateOrdered)) as unknown as Date,
+    },
     onSubmit: async (values) => {
       const token = getCookie("access_token");
       await axios
@@ -43,6 +50,7 @@ export default function EditOrderModal({
           { ...values, orderId: order._id },
           {
             headers: { Authorization: "Bearer " + token },
+            withCredentials: true,
           }
         )
         .then(() => {
@@ -51,7 +59,7 @@ export default function EditOrderModal({
           mutate();
         })
         .catch((err) => {
-          toast.error(err.response?.data.message ?? err.message)
+          toast.error(err.response?.data.message ?? err.message);
         });
       formik.setSubmitting(false);
     },
@@ -89,6 +97,31 @@ export default function EditOrderModal({
           <Typography variant="h4">Edit Order</Typography>
           <form onSubmit={formik.handleSubmit} style={{ marginTop: "1rem" }}>
             <Box display="flex" sx={{ flexDirection: "column", gap: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel id="supplier-select-label">Supplier</InputLabel>
+                <Select
+                  labelId="supplier-select-label"
+                  id="supplier-select"
+                  value={formik.values.supplierId}
+                  label="Supplier"
+                  name="supplierId"
+                  onChange={formik.handleChange}
+                  error={Boolean(
+                    formik.touched.supplierId && formik.errors.supplierId
+                  )}
+                >
+                  {suppliers.map((item: { name: string; _id: string }) => (
+                    <MenuItem value={item._id}>{item.name}</MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText
+                  error={Boolean(
+                    formik.touched.supplierId && formik.errors.supplierId
+                  )}
+                >
+                  {formik.touched.supplierId && formik.errors.supplierId}
+                </FormHelperText>
+              </FormControl>
               <FormControl fullWidth>
                 <InputLabel id="item-select-label">Item</InputLabel>
                 <Select

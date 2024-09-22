@@ -13,6 +13,7 @@ export interface GetOrdersDTO {
 export interface CreateOrderDTO {
   userId: string;
   itemId: string;
+  supplierId: string;
   quantity: number;
   dateOrdered: Date;
   status: 'failed' | 'complete' | 'pending';

@@ -129,4 +129,9 @@ export class CategoryService {
     });
     return category?.toObject();
   }
+
+  async getTotalCount() {
+    const categories = await this.categoryModel.find({ isArchived: false });
+    return categories?.length ?? 0;
+  }
 }

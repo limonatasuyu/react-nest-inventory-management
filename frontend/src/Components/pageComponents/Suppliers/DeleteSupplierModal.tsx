@@ -25,6 +25,7 @@ export default function DeleteSupplierModal({
     axios
       .delete("http://localhost:3000/supplier/" + supplier._id, {
         headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
       })
       .then(() => {
         setOpen(false);

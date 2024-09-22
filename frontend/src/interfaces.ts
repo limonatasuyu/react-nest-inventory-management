@@ -16,6 +16,7 @@ export interface SupplierData {
 export interface OrderData {
   _id: string;
   item: { name: string; _id: string };
+  supplier: { name: string; _id: string };
   quantity: number;
   dateOrdered: Date;
   status: "failed" | "complete" | "pending";

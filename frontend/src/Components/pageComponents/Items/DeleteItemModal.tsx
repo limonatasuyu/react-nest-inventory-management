@@ -25,6 +25,7 @@ export default function DeleteItemModal({
     axios
       .delete("http://localhost:3000/item/" + item._id, {
         headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
       })
       .then(() => {
         setOpen(false);

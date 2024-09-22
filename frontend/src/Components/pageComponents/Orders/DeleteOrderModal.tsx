@@ -25,6 +25,7 @@ export default function DeleteOrderModal({
     axios
       .delete("http://localhost:3000/order/" + order._id, {
         headers: { Authorization: "Bearer " + token },
+        withCredentials: true,
       })
       .then(() => {
         setOpen(false);

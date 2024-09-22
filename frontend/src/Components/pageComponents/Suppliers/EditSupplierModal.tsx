@@ -36,6 +36,7 @@ export default function EditSupplierModal({
           { ...values, supplierId: supplier._id },
           {
             headers: { Authorization: "Bearer " + token },
+            withCredentials: true,
           }
         )
         .then(() => {

@@ -23,6 +23,7 @@ export default function CreateSupplierModal({
       await axios
         .post("http://localhost:3000/supplier", values, {
           headers: { Authorization: "Bearer " + token },
+          withCredentials: true,
         })
         .then(() => {
           setOpen(false);

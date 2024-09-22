@@ -32,7 +32,8 @@ export default function EditCategoryModal({
           { ...values, categoryId: category._id },
           {
             headers: { Authorization: "Bearer " + token },
-          }
+            withCredentials: true,
+          },
         )
         .then(() => {
           setOpen(false);

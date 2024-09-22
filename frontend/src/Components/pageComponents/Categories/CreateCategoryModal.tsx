@@ -23,6 +23,7 @@ export default function CreateCategoryModal({
       await axios
         .post("http://localhost:3000/category", values, {
           headers: { Authorization: "Bearer " + token },
+          withCredentials: true,
         })
         .then(() => {
           setOpen(false);
