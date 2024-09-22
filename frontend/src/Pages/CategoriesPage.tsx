@@ -6,6 +6,7 @@ import CreateCategoryModal from "../Components/pageComponents/Categories/CreateC
 import EditCategoryModal from "../Components/pageComponents/Categories/EditCategoryModal";
 import DeleteCategoryModal from "../Components/pageComponents/Categories/DeleteCategoryModal";
 import { CategoryData } from "../interfaces";
+import { getCookie } from "../utils";
 
 export default function CategoriesPage() {
   const [data, setData] = useState<{
@@ -38,7 +39,7 @@ export default function CategoriesPage() {
   }
 
   function fetchData() {
-    const token = window.sessionStorage.getItem("access_token");
+    const token = getCookie("access_token");
     axios
       .get(
         `http://localhost:3000/category?page=${

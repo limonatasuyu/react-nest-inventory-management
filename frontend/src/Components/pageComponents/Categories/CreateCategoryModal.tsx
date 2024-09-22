@@ -7,6 +7,7 @@ import {
 } from "../../../validators/category-validator";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { getCookie } from "../../../utils";
 
 export default function CreateCategoryModal({
   mutate,
@@ -18,7 +19,7 @@ export default function CreateCategoryModal({
   const formik = useFormik<CategorySchema>({
     initialValues: { name: "", description: "" },
     onSubmit: async (values) => {
-      const token = window.sessionStorage.getItem("access_token");
+      const token = getCookie("access_token");
       await axios
         .post("http://localhost:3000/category", values, {
           headers: { Authorization: "Bearer " + token },
@@ -27,10 +28,8 @@ export default function CreateCategoryModal({
           setOpen(false);
           toast.success('Category created succesfully.');
           mutate();
-        })
-        .catch((err) => {
-          toast.error(err);
-        });
+        })    
+        .catch((err) => toast.error(err.response?.data.message ?? err.message));
       formik.setSubmitting(false);
     },
     validationSchema: categorySchema,

@@ -16,6 +16,8 @@ import { OrderSchema, orderSchema } from "../../../validators/order-validator";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { getCookie } from "../../../utils";
 
 export default function CreateOrderModal({
   mutate,
@@ -27,9 +29,9 @@ export default function CreateOrderModal({
   const [open, setOpen] = useState(false);
 
   const formik = useFormik<OrderSchema>({
-    initialValues: { itemId: "", quantity: 0, dateOrdered: new Date() },
+    initialValues: { itemId: "", quantity: 0, dateOrdered: dayjs(new Date()) as unknown as Date },
     onSubmit: async (values) => {
-      const token = window.sessionStorage.getItem("access_token");
+      const token = getCookie("access_token");
       await axios
         .post("http://localhost:3000/order", values, {
           headers: { Authorization: "Bearer " + token },
@@ -39,8 +41,8 @@ export default function CreateOrderModal({
           toast.success("Order created succesfully.");
           mutate();
         })
-        .catch((err) => {
-          toast.error(err);
+        .catch((err) => {  
+          toast.error(err.response?.data.message ?? err.message)
         });
       formik.setSubmitting(false);
     },
@@ -79,6 +81,7 @@ export default function CreateOrderModal({
                   id="item-select"
                   value={formik.values.itemId}
                   label="Item"
+                  name="itemId"
                   onChange={formik.handleChange}
                   error={Boolean(formik.touched.itemId && formik.errors.itemId)}
                 >
@@ -106,7 +109,7 @@ export default function CreateOrderModal({
               <DatePicker
                 label="Order Date"
                 name="dateOrdered"
-                onChange={formik.handleChange}
+                onChange={(e) => formik.setFieldValue('dateOrdered', dayjs(e))}
                 value={formik.values.dateOrdered as unknown as null}
                 slotProps={{
                   textField: {

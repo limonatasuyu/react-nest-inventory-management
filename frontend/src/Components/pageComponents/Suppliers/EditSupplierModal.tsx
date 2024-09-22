@@ -10,6 +10,7 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import { SupplierData } from "../../../interfaces";
 import toast from "react-hot-toast";
+import { getCookie } from '../../../utils'
 
 export default function EditSupplierModal({
   supplier,
@@ -28,7 +29,7 @@ export default function EditSupplierModal({
       address: supplier.address,
     },
     onSubmit: async (values) => {
-      const token = window.sessionStorage.getItem("access_token");
+      const token = getCookie("access_token");
       await axios
         .put(
           "http://localhost:3000/supplier/",
@@ -43,7 +44,7 @@ export default function EditSupplierModal({
           mutate();
         })
         .catch((err) => {
-          toast.error(err);
+          toast.error(err.response?.data.message ?? err.message)
         });
       formik.setSubmitting(false);
     },

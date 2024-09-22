@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -15,6 +15,8 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
+      const response: Response = context.switchToHttp().getResponse<Response>();
+      response.setHeader('Clear-Site-Data', '"cookies"');
       throw new UnauthorizedException();
     }
 
@@ -24,6 +26,8 @@ export class AuthGuard implements CanActivate {
       });
       request['user'] = payload;
     } catch {
+      const response: Response = context.switchToHttp().getResponse<Response>();
+      response.setHeader('Clear-Site-Data', '"cookies"');
       throw new UnauthorizedException();
     }
     return true;

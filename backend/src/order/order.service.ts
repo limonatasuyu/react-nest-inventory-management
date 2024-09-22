@@ -33,6 +33,7 @@ export class OrderService {
       createdBy: new mongoose.Types.ObjectId(dto.userId),
       updatedAt: new Date(),
       updatedBy: new mongoose.Types.ObjectId(dto.userId),
+      isArchived: false,
     });
     if (!createdOrder) throw new InternalServerErrorException();
     return { message: 'Order created succesfully.' };
@@ -53,7 +54,7 @@ export class OrderService {
       { $unwind: '$item' },
       {
         $facet: {
-          items: [
+          orders: [
             {
               $project: {
                 _id: 1,
@@ -64,6 +65,7 @@ export class OrderService {
                 quantity: 1,
                 dateOrdered: 1,
                 status: 1,
+                createdAt: 1,
               },
             },
             {

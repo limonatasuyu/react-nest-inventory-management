@@ -8,10 +8,13 @@ import {
   Param,
   Delete,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { GetItemsDTO, CreateItemDTO, UpdateItemDTO } from '../dto/items.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('item')
 export class ItemController {
   constructor(private itemService: ItemService) {}
@@ -27,13 +30,13 @@ export class ItemController {
   }
 
   @Post()
-  async createItem(@Body() dto: CreateItemDTO) {
-    return await this.itemService.createItem(dto);
+  async createItem(@Body() dto: CreateItemDTO, @Request() req) {
+    return await this.itemService.createItem({ ...dto, userId: req.user.sub });
   }
 
   @Put()
-  async updateItem(@Body() dto: UpdateItemDTO) {
-    return await this.itemService.updateItem, dto;
+  async updateItem(@Body() dto: UpdateItemDTO, @Request() req) {
+    return await this.itemService.updateItem({ ...dto, userId: req.user.sub });
   }
 
   @Delete(':id')

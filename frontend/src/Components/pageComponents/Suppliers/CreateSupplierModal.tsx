@@ -7,6 +7,7 @@ import {
 } from "../../../validators/supplier-validator";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { getCookie } from "../../../utils";
 
 export default function CreateSupplierModal({
   mutate,
@@ -18,7 +19,7 @@ export default function CreateSupplierModal({
   const formik = useFormik<SupplierSchema>({
     initialValues: { name: "", contactInfo: "", address: "" },
     onSubmit: async (values) => {
-      const token = window.sessionStorage.getItem("access_token");
+      const token = getCookie("access_token");
       await axios
         .post("http://localhost:3000/supplier", values, {
           headers: { Authorization: "Bearer " + token },
@@ -29,7 +30,7 @@ export default function CreateSupplierModal({
           mutate();
         })
         .catch((err) => {
-          toast.error(err);
+          toast.error(err.response?.data.message ?? err.message)
         });
       formik.setSubmitting(false);
     },

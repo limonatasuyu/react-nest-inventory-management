@@ -6,6 +6,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { CategoryData } from "../../../interfaces";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import toast from "react-hot-toast";
+import { getCookie } from "../../../utils";
 
 export default function DeleteCategoryModal({
   category,
@@ -20,7 +21,7 @@ export default function DeleteCategoryModal({
   function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-    const token = window.sessionStorage.getItem("access_token");
+    const token = getCookie("access_token");
     axios
       .delete("http://localhost:3000/category/" + category._id, {
         headers: { Authorization: "Bearer " + token },
@@ -31,7 +32,7 @@ export default function DeleteCategoryModal({
         mutate();
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error(err.response?.data.message ?? err.message)
       })
       .finally(() => {
         setSubmitting(false);

@@ -19,6 +19,7 @@ import { loginSchema, LoginSchema } from "../validators/auth-validators";
 import forklift from "/forklift.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,12 +27,12 @@ export default function LoginPage() {
   const formik = useFormik<LoginSchema>({
     initialValues: { email: "", password: "" },
     onSubmit: (values) => {
-      axios.post("http://localhost:3000/auth/login", values).then((res) => {
-        if (res.data.access_token) {
-          window.sessionStorage.setItem("access_token", res.data.access_token);
+      axios.post("http://localhost:3000/auth/login", values, { withCredentials: true }).then((res) => {
+        if (res.data.message) {
+          toast.success(res.data.message)
           navigate("/");
         }
-      });
+      }).catch(err => {toast.error(err.response?.data.message ?? err.message)})
     },
     validationSchema: loginSchema,
   });

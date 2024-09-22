@@ -55,11 +55,14 @@ export class ItemService {
 
   async createItem(dto: CreateItemDTO) {
     const existingUser = await this.userService.findOne(dto.userId);
-    if (!existingUser) throw new BadRequestException();
+    if (!existingUser)
+      throw new BadRequestException('Could not find the user.');
     const existingSupplier = await this.supplierService.findOne(dto.supplierId);
-    if (!existingSupplier) throw new BadRequestException();
+    if (!existingSupplier)
+      throw new BadRequestException('Could not find the supplier.');
     const existingCategory = await this.categoryService.findOne(dto.categoryId);
-    if (!existingCategory) throw new BadRequestException();
+    if (!existingCategory)
+      throw new BadRequestException('Could not find the category.');
     const createdItem = await this.itemsModel.create({
       _id: new mongoose.Types.ObjectId(),
       name: dto.name,
@@ -72,6 +75,7 @@ export class ItemService {
       createdAt: new Date(),
       updatedBy: new mongoose.Types.ObjectId(dto.userId),
       updatedAt: new Date(),
+      isArchived: false,
     });
 
     if (!createdItem) {
@@ -120,6 +124,7 @@ export class ItemService {
   async getItems(dto: GetItemsDTO) {
     const pageSize = 10;
     const items = await this.itemsModel.aggregate([
+      { $match: { isArchived: false } },
       {
         $lookup: {
           from: 'categories',
@@ -156,6 +161,7 @@ export class ItemService {
                 quantity: 1,
                 price: 1,
                 description: 1,
+                createdAt: 1,
               },
             },
             {

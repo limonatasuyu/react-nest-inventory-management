@@ -19,6 +19,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { OrderData } from "../../../interfaces";
 import toast from "react-hot-toast";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { getCookie } from "../../../utils";
 
 export default function EditOrderModal({
   order,
@@ -31,11 +33,10 @@ export default function EditOrderModal({
 }) {
   const [open, setOpen] = useState(false);
 
-  console.log("order: ", order);
   const formik = useFormik<OrderSchema>({
-    initialValues: { itemId: order.item._id, quantity: order.quantity, dateOrdered: new Date(order.dateOrdered) },
+    initialValues: { itemId: order.item._id, quantity: order.quantity, dateOrdered: dayjs(new Date(order.dateOrdered)) as unknown as Date },
     onSubmit: async (values) => {
-      const token = window.sessionStorage.getItem("access_token");
+      const token = getCookie("access_token");
       await axios
         .put(
           "http://localhost:3000/order/",
@@ -50,7 +51,7 @@ export default function EditOrderModal({
           mutate();
         })
         .catch((err) => {
-          toast.error(err);
+          toast.error(err.response?.data.message ?? err.message)
         });
       formik.setSubmitting(false);
     },
@@ -95,6 +96,7 @@ export default function EditOrderModal({
                   id="item-select"
                   value={formik.values.itemId}
                   label="Item"
+                  name="itemId"
                   onChange={formik.handleChange}
                   error={Boolean(formik.touched.itemId && formik.errors.itemId)}
                 >

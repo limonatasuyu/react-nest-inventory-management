@@ -6,6 +6,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { OrderData } from "../../../interfaces";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import toast from "react-hot-toast";
+import { getCookie } from "../../../utils";
 
 export default function DeleteOrderModal({
   order,
@@ -20,7 +21,7 @@ export default function DeleteOrderModal({
   function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-    const token = window.sessionStorage.getItem("access_token");
+    const token = getCookie("access_token");
     axios
       .delete("http://localhost:3000/order/" + order._id, {
         headers: { Authorization: "Bearer " + token },
@@ -30,8 +31,8 @@ export default function DeleteOrderModal({
         toast.success('Order deleted succesfully.');
         mutate();
       })
-      .catch((err) => {
-        toast.error(err);
+      .catch((err) => {  
+        toast.error(err.response?.data.message ?? err.message)
       })
       .finally(() => {
         setSubmitting(false);

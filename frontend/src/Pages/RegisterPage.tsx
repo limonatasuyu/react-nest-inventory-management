@@ -14,15 +14,17 @@ import { useFormik } from "formik";
 import logo from "/logo.png";
 import { registerSchema, RegisterSchema } from "../validators/auth-validators";
 import packages from "/packages.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const formik = useFormik<RegisterSchema>({
     initialValues: {
@@ -34,9 +36,15 @@ export default function RegisterPage() {
       passwordAgain: "",
     },
     onSubmit: (values) => {
-      axios.post("http://localhost:3000/auth/register", values).then((res) => {
-        console.log("res: ", res);
-      });
+      axios
+        .post("http://localhost:3000/auth/register", values)
+        .then((res) => {
+          if (res.data.message) {
+            toast.success(res.data.message);
+            navigate("/login");
+          }
+        })
+        .catch((err) => toast.error(err.response?.data.message ?? err.message));
     },
     validationSchema: registerSchema,
   });

@@ -6,6 +6,7 @@ import CreateItemModal from "../Components/pageComponents/Items/CreateItemModal"
 import EditItemModal from "../Components/pageComponents/Items/EditItemModal";
 import DeleteItemModal from "../Components/pageComponents/Items/DeleteItemModal";
 import { ItemData } from "../interfaces";
+import { getCookie } from '../utils'
 
 export default function ItemsPage() {
   const [data, setData] = useState<{
@@ -40,7 +41,7 @@ export default function ItemsPage() {
   }
 
   async function fetchItemsSelect() {
-    const token = window.sessionStorage.getItem("access_token");
+    const token = getCookie("access_token");
     axios
       .get("http://localhost:3000/category/select", {
         headers: { Authorization: "Bearer " + token },
@@ -59,7 +60,7 @@ export default function ItemsPage() {
   }
 
   function fetchData() {
-    const token = window.sessionStorage.getItem("access_token");
+    const token = getCookie("access_token");
     axios
       .get(
         `http://localhost:3000/item?page=${paginationModel.page + 1}&sortBy=${
@@ -79,6 +80,28 @@ export default function ItemsPage() {
     {
       field: "name",
       headerName: "Name",
+      flex: 1,
+    },
+    {
+      field: "category",
+      headerName: "Category",
+      flex: 1,
+      valueGetter: (val: {name: string}) => val.name
+    },
+    {
+      field: "supplier",
+      headerName: "Supplier",
+      flex: 1, 
+      valueGetter: (val: {name: string}) => val.name
+    },
+    {
+      field: "price",
+      headerName: "Price",
+      flex: 1,
+    },
+    {
+      field: "quantity",
+      headerName: "Quantity",
       flex: 1,
     },
     {

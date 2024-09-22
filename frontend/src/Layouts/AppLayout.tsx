@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import {
   Box,
@@ -12,13 +12,15 @@ import {
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CategoryIcon from '@mui/icons-material/Category';
 import GroupIcon from '@mui/icons-material/Group';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { getCookie } from "../utils";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const drawerWidth = 240;
 
@@ -77,8 +79,28 @@ const Drawer = styled(MuiDrawer, {
   ],
 }));
 
+function deleteCookie( name: string, path: string, domain: string ) {
+  if(getCookie(name)) {
+    document.cookie = name + "=" +
+      ((path) ? ";path="+path:"")+
+      ((domain)?";domain="+domain:"") +
+      ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  }
+}
+
+
 export default function MiniDrawer() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const access_token = getCookie('access_token')
+  useEffect(() => {
+    if (!access_token) navigate('/login') 
+  }, [access_token, navigate])
+
+  function handleLogout() {
+    deleteCookie('access_token', '/', 'localhost')
+    navigate('/login')
+  }
 
   const items = [
     {
@@ -129,6 +151,13 @@ export default function MiniDrawer() {
               </ListItemButton>
             </ListItem>
           ))}
+
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton onClick={handleLogout}>
+                <ListItemIcon><LogoutIcon /></ListItemIcon>
+                <ListItemText primary={"Logout"} />
+              </ListItemButton>
+            </ListItem>
         </List>
       </Drawer>
       <Outlet />

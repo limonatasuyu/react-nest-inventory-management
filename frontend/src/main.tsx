@@ -11,6 +11,8 @@ import CategoriesPage from "./Pages/CategoriesPage";
 import OrdersPage from "./Pages/OrdersPage";
 import SuppliersPage from "./Pages/SuppliersPage";
 import { Toaster } from "react-hot-toast";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const router = createBrowserRouter(
   [
@@ -56,13 +58,19 @@ const router = createBrowserRouter(
   { basename: "/" }
 );
 
+function App() {
+  return (
+    <div>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RouterProvider router={router} />
+      </LocalizationProvider>
+      <Toaster />
+    </div>
+  );
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-root.render(
-  <div>
-    <RouterProvider router={router} />
-    <Toaster />
-  </div>
-);
+root.render(<App />);

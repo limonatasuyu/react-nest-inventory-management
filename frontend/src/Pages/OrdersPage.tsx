@@ -1,11 +1,17 @@
 import { Box, Typography } from "@mui/material";
-import { DataGrid, GridSortModel } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridSortModel,
+  GridRenderCellParams,
+  GridValidRowModel,
+} from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CreateOrderModal from "../Components/pageComponents/Orders/CreateOrderModal";
 import EditOrderModal from "../Components/pageComponents/Orders/EditOrderModal";
 import DeleteOrderModal from "../Components/pageComponents/Orders/DeleteOrderModal";
 import { OrderData } from "../interfaces";
+import { getCookie } from '../utils'
 
 export default function OrdersPage() {
   const [data, setData] = useState<{
@@ -39,9 +45,9 @@ export default function OrdersPage() {
   }
 
   async function fetchItemsSelect() {
-    const token = window.sessionStorage.getItem("access_token");
+    const token = getCookie("access_token");
     axios
-      .get("http://localhost:3000/order/select", {
+      .get("http://localhost:3000/item/select", {
         headers: { Authorization: "Bearer " + token },
       })
       .then((res) => {
@@ -50,7 +56,7 @@ export default function OrdersPage() {
   }
 
   function fetchData() {
-    const token = window.sessionStorage.getItem("access_token");
+    const token = getCookie("access_token");
     axios
       .get(
         `http://localhost:3000/order?page=${paginationModel.page + 1}&sortBy=${
@@ -64,24 +70,49 @@ export default function OrdersPage() {
   }
 
   useEffect(fetchData, [paginationModel, sortingModel]);
-  useEffect(() => {fetchItemsSelect()}, [])
+  useEffect(() => {
+    fetchItemsSelect();
+  }, []);
 
   const columns = [
     {
-      field: "name",
-      headerName: "Name",
+      field: "item",
+      headerName: "Item",
       flex: 1,
+      valueGetter: (val: { name: string }) => val.name,
     },
     {
-      field: "description",
-      headerName: "Description",
+      field: "dateOrdered",
+      headerName: "Order Date",
       flex: 1,
+      valueGetter: (val: string) => new Date(val).toUTCString(),
     },
     {
       field: "createdAt",
       headerName: "Created At",
       flex: 1,
       valueGetter: (val: string) => new Date(val).toUTCString(),
+    },
+    {
+      field: "quantity",
+      headerName: "Quantity",
+      flex: 1,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      renderCell: (params: GridRenderCellParams<GridValidRowModel, string>) => {
+        let color: "warning" | "error" | "success";
+        if (params.value === "pending") color = "warning";
+        else if (params.value === "failed") color = "error";
+        else color = "success";
+        return (
+          <Typography sx={{ mt: 1.5 }} color={color}>
+            {params.value}
+          </Typography>
+        );
+      },
     },
     {
       field: "actions",
@@ -91,7 +122,7 @@ export default function OrdersPage() {
       flex: 1,
       getActions: ({ row }: { row: OrderData }) => {
         return [
-          <EditOrderModal order={row} mutate={fetchData} items={itemsData}/>,
+          <EditOrderModal order={row} mutate={fetchData} items={itemsData} />,
           <DeleteOrderModal order={row} mutate={fetchData} />,
         ];
       },
@@ -110,7 +141,7 @@ export default function OrdersPage() {
           </Typography>
         </Box>
         <Box sx={{ mr: 10 }}>
-          <CreateOrderModal mutate={fetchData} items={itemsData}/>
+          <CreateOrderModal mutate={fetchData} items={itemsData} />
         </Box>
       </Box>
       <DataGrid
@@ -120,7 +151,7 @@ export default function OrdersPage() {
         rows={data.orders}
         autoHeight
         sx={{ alignSelf: "center", mt: 10, width: "90%" }}
-        rowCount={data.totalRecordCount[0].count}
+        rowCount={data.totalRecordCount[0]?.count ?? 1}
         paginationMode="server"
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}

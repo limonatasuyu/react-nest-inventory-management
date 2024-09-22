@@ -1,7 +1,9 @@
-import { Controller, Get, Query, Post, Body } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { GetOrdersDTO, CreateOrderDTO } from '../dto/order.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('order')
 export class OrderController {
   constructor(private orderService: OrderService) {}
@@ -12,7 +14,10 @@ export class OrderController {
   }
 
   @Post()
-  async createOrder(@Body() dto: CreateOrderDTO) {
-    return await this.orderService.createOrder(dto);
+  async createOrder(@Body() dto: CreateOrderDTO, @Request() req) {
+    return await this.orderService.createOrder({
+      ...dto,
+      userId: req.user.sub,
+    });
   }
 }

@@ -10,6 +10,7 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import { CategoryData } from "../../../interfaces";
 import toast from "react-hot-toast";
+import { getCookie } from "../../../utils";
 
 export default function EditCategoryModal({
   category,
@@ -24,7 +25,7 @@ export default function EditCategoryModal({
   const formik = useFormik<CategorySchema>({
     initialValues: { name: category.name, description: category.description },
     onSubmit: async (values) => {
-      const token = window.sessionStorage.getItem("access_token");
+      const token = getCookie("access_token");
       await axios
         .put(
           "http://localhost:3000/category/",
@@ -39,7 +40,7 @@ export default function EditCategoryModal({
           mutate();
         })
         .catch((err) => {
-          toast.error(err);
+          toast.error(err.response?.data.message ?? err.message)
         });
       formik.setSubmitting(false);
     },
