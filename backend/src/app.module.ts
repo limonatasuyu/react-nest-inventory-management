@@ -19,9 +19,9 @@ import { CacheModule } from '@nestjs/cache-manager';
     }),
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      //process.env.NODE_ENV !== 'production'
-      /*  ? */ 'mongodb://127.0.0.1:27017/inventory?replicaSet=rs0',
-      //  : process.env.DB_URL,
+      process.env.NODE_ENV !== 'production'
+        ? 'mongodb://127.0.0.1:27017/inventory?replicaSet=rs0'
+        : process.env.DB_URL,
     ),
     ItemModule,
     CategoryModule,
