@@ -27,7 +27,7 @@ export default function LoginPage() {
   const formik = useFormik<LoginSchema>({
     initialValues: { email: "", password: "" },
     onSubmit: (values) => {
-      axios.post("http://localhost:3000/auth/login", values, { withCredentials: true }).then((res) => {
+      axios.post("https://react-nest-inventory-management-production.up.railway.app/auth/login", values, { withCredentials: true }).then((res) => {
         if (res.data.message) {
           toast.success(res.data.message)
           navigate("/");

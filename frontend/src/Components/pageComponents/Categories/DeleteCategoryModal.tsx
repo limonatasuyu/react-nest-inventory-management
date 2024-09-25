@@ -23,7 +23,7 @@ export default function DeleteCategoryModal({
     setSubmitting(true);
     const token = getCookie("access_token");
     axios
-      .delete("http://localhost:3000/category/" + category._id, {
+      .delete("https://react-nest-inventory-management-production.up.railway.app/category/" + category._id, {
         headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })

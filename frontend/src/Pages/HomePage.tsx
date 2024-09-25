@@ -68,7 +68,7 @@ export default function HomePage() {
   useEffect(() => {
     const token = getCookie("access_token");
     axios
-      .get("http://localhost:3000/metrics", {
+      .get("https://react-nest-inventory-management-production.up.railway.app/metrics", {
         headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
@@ -79,7 +79,7 @@ export default function HomePage() {
       });
 
     axios
-      .get("http://localhost:3000/updates", {
+      .get("https://react-nest-inventory-management-production.up.railway.app/updates", {
         headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })

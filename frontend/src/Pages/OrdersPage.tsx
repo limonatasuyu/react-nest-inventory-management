@@ -48,7 +48,7 @@ export default function OrdersPage() {
   async function fetchItemsSelect() {
     const token = getCookie("access_token");
     axios
-      .get("http://localhost:3000/item/select", {
+      .get("https://react-nest-inventory-management-production.up.railway.app/item/select", {
         headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
@@ -56,7 +56,7 @@ export default function OrdersPage() {
         setItemsData(res.data);
       });
     axios
-      .get("http://localhost:3000/supplier/select", {
+      .get("https://react-nest-inventory-management-production.up.railway.app/supplier/select", {
         headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
@@ -69,7 +69,7 @@ export default function OrdersPage() {
     const token = getCookie("access_token");
     axios
       .get(
-        `http://localhost:3000/order?page=${paginationModel.page + 1}&sortBy=${
+        `https://react-nest-inventory-management-production.up.railway.app/order?page=${paginationModel.page + 1}&sortBy=${
           sortingModel.sortBy
         }&sortOrder=${sortingModel.sortOrder}`,
         { headers: { Authorization: "Bearer " + token }, withCredentials: true, }

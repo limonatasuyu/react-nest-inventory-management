@@ -28,7 +28,7 @@ export default function EditCategoryModal({
       const token = getCookie("access_token");
       await axios
         .put(
-          "http://localhost:3000/category/",
+          "https://react-nest-inventory-management-production.up.railway.app/category/",
           { ...values, categoryId: category._id },
           {
             headers: { Authorization: "Bearer " + token },

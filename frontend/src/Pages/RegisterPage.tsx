@@ -37,7 +37,7 @@ export default function RegisterPage() {
     },
     onSubmit: (values) => {
       axios
-        .post("http://localhost:3000/auth/register", values)
+        .post("https://react-nest-inventory-management-production.up.railway.app/auth/register", values)
         .then((res) => {
           if (res.data.message) {
             toast.success(res.data.message);

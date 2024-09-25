@@ -11,6 +11,7 @@ export const orderSchema = yup.object({
   dateOrdered: yup
     .object()
     .test({ message: "Date is invalid", test: (value) => dayjs.isDayjs(value) })
+    //@ts-expect-error it works fine
     .test({
       message: "Date must be later than today",
       test: (value: dayjs.Dayjs) => value.isAfter(dayjs(new Date())),

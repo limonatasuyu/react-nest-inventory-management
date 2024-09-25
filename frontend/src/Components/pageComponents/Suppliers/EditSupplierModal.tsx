@@ -32,7 +32,7 @@ export default function EditSupplierModal({
       const token = getCookie("access_token");
       await axios
         .put(
-          "http://localhost:3000/supplier/",
+          "https://react-nest-inventory-management-production.up.railway.app/supplier/",
           { ...values, supplierId: supplier._id },
           {
             headers: { Authorization: "Bearer " + token },

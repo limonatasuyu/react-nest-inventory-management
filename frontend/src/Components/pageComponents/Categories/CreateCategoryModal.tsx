@@ -21,7 +21,7 @@ export default function CreateCategoryModal({
     onSubmit: async (values) => {
       const token = getCookie("access_token");
       await axios
-        .post("http://localhost:3000/category", values, {
+        .post("https://react-nest-inventory-management-production.up.railway.app/category", values, {
           headers: { Authorization: "Bearer " + token },
           withCredentials: true,
         })

@@ -21,7 +21,7 @@ export default function CreateSupplierModal({
     onSubmit: async (values) => {
       const token = getCookie("access_token");
       await axios
-        .post("http://localhost:3000/supplier", values, {
+        .post("https://react-nest-inventory-management-production.up.railway.app/supplier", values, {
           headers: { Authorization: "Bearer " + token },
           withCredentials: true,
         })

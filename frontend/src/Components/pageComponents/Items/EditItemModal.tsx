@@ -46,7 +46,7 @@ export default function EditItemModal({
       const token = getCookie("access_token");
       await axios
         .put(
-          "http://localhost:3000/item/",
+          "https://react-nest-inventory-management-production.up.railway.app/item/",
           { ...values, itemId: item._id },
           {
             headers: { Authorization: "Bearer " + token },

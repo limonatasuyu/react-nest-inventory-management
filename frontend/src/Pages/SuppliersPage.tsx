@@ -42,7 +42,7 @@ export default function SuppliersPage() {
     const token = getCookie("access_token");
     axios
       .get(
-        `http://localhost:3000/supplier?page=${
+        `https://react-nest-inventory-management-production.up.railway.app/supplier?page=${
           paginationModel.page + 1
         }&sortBy=${sortingModel.sortBy}&sortOrder=${sortingModel.sortOrder}`,
         { headers: { Authorization: "Bearer " + token }, withCredentials: true }

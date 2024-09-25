@@ -40,7 +40,7 @@ export default function CreateItemModal({
     onSubmit: async (values) => {
       const token = getCookie("access_token");
       await axios
-        .post("http://localhost:3000/item", values, {
+        .post("https://react-nest-inventory-management-production.up.railway.app/item", values, {
           headers: { Authorization: "Bearer " + token },
           withCredentials: true,
         })

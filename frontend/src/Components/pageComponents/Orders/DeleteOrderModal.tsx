@@ -23,7 +23,7 @@ export default function DeleteOrderModal({
     setSubmitting(true);
     const token = getCookie("access_token");
     axios
-      .delete("http://localhost:3000/order/" + order._id, {
+      .delete("https://react-nest-inventory-management-production.up.railway.app/order/" + order._id, {
         headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
