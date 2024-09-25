@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { /*createBrowserRouter,*/ RouterProvider, createHashRouter } from "react-router-dom";
 import AuthLayout from "./Layouts/AuthLayout";
 import AppLayout from "./Layouts/AppLayout";
 import LoginPage from "./Pages/LoginPage";
@@ -14,7 +14,7 @@ import { Toaster } from "react-hot-toast";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const router = createBrowserRouter(
+const router = createHashRouter(
   [
     {
       element: <AuthLayout />,
