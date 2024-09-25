@@ -11,4 +11,9 @@ export class AppController {
   async getMetrics() {
     return await this.appService.getMetrics();
   }
+
+  @Get('updates')
+  async getUpdates() {
+    return await this.appService.getRecentActivity();
+  }
 }

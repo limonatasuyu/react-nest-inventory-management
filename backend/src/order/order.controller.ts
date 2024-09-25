@@ -1,8 +1,19 @@
-import { Controller, Get, Query, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  UseInterceptors,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { GetOrdersDTO, CreateOrderDTO } from '../dto/order.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { OrderInterceptor } from './order.interceptor';
 
+@UseInterceptors(OrderInterceptor)
 @UseGuards(AuthGuard)
 @Controller('order')
 export class OrderController {

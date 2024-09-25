@@ -9,6 +9,7 @@ import {
   Delete,
   Request,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { SupplierService } from './supplier.service';
 import {
@@ -17,7 +18,9 @@ import {
   UpdateSupplierDTO,
 } from 'src/dto/supplier.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { SupplierInterceptor } from './supplier.interceptor';
 
+@UseInterceptors(SupplierInterceptor)
 @UseGuards(AuthGuard)
 @Controller('supplier')
 export class SupplierController {

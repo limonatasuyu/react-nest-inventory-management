@@ -17,10 +17,10 @@ import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CategoryIcon from '@mui/icons-material/Category';
-import GroupIcon from '@mui/icons-material/Group';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { getCookie } from "../utils";
 import LogoutIcon from '@mui/icons-material/Logout';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const drawerWidth = 240;
 
@@ -121,7 +121,7 @@ export default function MiniDrawer() {
     {
       name: "Suppliers",
       path: "/suppliers",
-      icon: <GroupIcon />
+      icon: <LocalShippingIcon />
     },
     {
       name: "Orders",
@@ -131,7 +131,7 @@ export default function MiniDrawer() {
   ];
 
   return (
-    <Box sx={{ display: "flex", alignItems: 'start', height: "100vh", width: "100vw" }}>
+    <Box sx={{ display: "flex", alignItems: 'start', height: "100vh", width: "100vw", overflowX: 'hidden' }}>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader sx={open ? {} : { alignSelf: 'center' }}>
           <IconButton

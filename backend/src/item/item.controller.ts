@@ -9,11 +9,14 @@ import {
   Delete,
   Request,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { GetItemsDTO, CreateItemDTO, UpdateItemDTO } from '../dto/items.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ItemInterceptor } from './item.interceptor';
 
+@UseInterceptors(ItemInterceptor)
 @UseGuards(AuthGuard)
 @Controller('item')
 export class ItemController {

@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import mongoose, { Model } from 'mongoose';
 import {
@@ -13,17 +15,29 @@ import {
 import { Category } from 'src/schemes/category.schema';
 import { UserService } from '../user/user.service';
 import { InjectModel } from '@nestjs/mongoose';
+import { ItemService } from 'src/item/item.service';
 
-Injectable();
+@Injectable()
 export class CategoryService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
     private userService: UserService,
+    @Inject(forwardRef(() => ItemService))
+    private itemService: ItemService,
   ) {}
 
   async deleteCategory(dto: DeleteCategoryDTO) {
     const existinguser = await this.userService.findOne(dto.userId);
     if (!existinguser) throw new BadRequestException();
+
+    const existingItem = await this.itemService.findOneByCategoryId(
+      dto.categoryId,
+    );
+    if (existingItem)
+      throw new BadRequestException(
+        'There is an item tied to this category, you need to first delete it.',
+      );
+
     const updatedCategory = await this.categoryModel.updateOne(
       {
         _id: new mongoose.Types.ObjectId(dto.categoryId),

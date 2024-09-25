@@ -9,13 +9,18 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 1000 * 60 * 60 * 24, // 1 day
+    }),
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
       //process.env.NODE_ENV !== 'production'
-      /*  ? */'mongodb://127.0.0.1:27017/inventory?replicaSet=rs0'
+      /*  ? */ 'mongodb://127.0.0.1:27017/inventory?replicaSet=rs0',
       //  : process.env.DB_URL,
     ),
     ItemModule,

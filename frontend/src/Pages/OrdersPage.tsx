@@ -148,7 +148,7 @@ export default function OrdersPage() {
     <Box display="flex" sx={{ ml: 2, flexDirection: "column", width: "100%" }}>
       <Box
         display="flex"
-        sx={{ justifyContent: "space-between", alignItems: "center" }}
+        sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap' }}
       >
         <Box>
           <Typography variant="h1">Orders</Typography>

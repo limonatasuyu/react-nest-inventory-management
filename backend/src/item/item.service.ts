@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import mongoose, { Model } from 'mongoose';
 import { Item } from '../schemes/item.schema';
@@ -21,6 +23,7 @@ export class ItemService {
   constructor(
     @InjectModel(Item.name) private itemsModel: Model<Item>,
     private userService: UserService,
+    @Inject(forwardRef(() => CategoryService))
     private categoryService: CategoryService,
     private supplierService: SupplierService,
   ) {}
@@ -197,11 +200,21 @@ export class ItemService {
   async getLowStockItems() {
     const lowStockTreshold = 10;
     const items = await this.itemsModel
-      .find({
-        isArchived: false,
-        quantity: { $lt: lowStockTreshold },
-      }, '_id name price quantity')
-      .limit(10)
+      .find(
+        {
+          isArchived: false,
+          quantity: { $lt: lowStockTreshold },
+        },
+        '_id name price quantity',
+      )
+      .limit(10);
     return items ?? [];
+  }
+
+  async findOneByCategoryId(categoryId: string) {
+    const item = await this.itemsModel.findOne({
+      categoryId: new mongoose.Types.ObjectId(categoryId),
+    });
+    return item;
   }
 }

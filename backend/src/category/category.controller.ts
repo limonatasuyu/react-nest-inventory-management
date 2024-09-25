@@ -9,6 +9,7 @@ import {
   Delete,
   Request,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import {
@@ -17,7 +18,9 @@ import {
   UpdateCategoryDTO,
 } from 'src/dto/categories.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { CategoryInterceptor } from './category.interceptor';
 
+@UseInterceptors(CategoryInterceptor)
 @UseGuards(AuthGuard)
 @Controller('category')
 export class CategoryController {
@@ -43,7 +46,10 @@ export class CategoryController {
 
   @Put()
   async updateCategory(@Body() dto: UpdateCategoryDTO, @Request() req) {
-    return await this.categoryService.updateCategory({...dto, userId: req.user.sub});
+    return await this.categoryService.updateCategory({
+      ...dto,
+      userId: req.user.sub,
+    });
   }
 
   @Delete(':id')
