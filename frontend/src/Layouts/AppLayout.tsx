@@ -158,7 +158,7 @@ export default function MiniDrawer() {
         <List>
           {items.map((item, index) => (
             <ListItem disablePadding key={index} sx={{ display: "block" }}>
-              <ListItemButton href={item.path}>
+              <ListItemButton onClick={() => navigate(item.path)}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.name} />
               </ListItemButton>
