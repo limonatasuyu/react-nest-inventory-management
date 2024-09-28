@@ -21,7 +21,6 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import axios from "axios";
-import { useEffect } from "react"
 
 const drawerWidth = 240;
 
