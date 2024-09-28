@@ -10,7 +10,6 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import { SupplierData } from "../../../interfaces";
 import toast from "react-hot-toast";
-import { getCookie } from '../../../utils'
 
 export default function EditSupplierModal({
   supplier,
@@ -29,13 +28,11 @@ export default function EditSupplierModal({
       address: supplier.address,
     },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .put(
           "https://react-nest-inventory-management-production.up.railway.app/supplier/",
           { ...values, supplierId: supplier._id },
           {
-            headers: { Authorization: "Bearer " + token },
             withCredentials: true,
           }
         )

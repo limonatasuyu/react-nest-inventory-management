@@ -6,7 +6,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { CategoryData } from "../../../interfaces";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import toast from "react-hot-toast";
-import { getCookie } from "../../../utils";
 
 export default function DeleteCategoryModal({
   category,
@@ -21,10 +20,8 @@ export default function DeleteCategoryModal({
   function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-    const token = getCookie("access_token");
     axios
       .delete("https://react-nest-inventory-management-production.up.railway.app/category/" + category._id, {
-        headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
       .then(() => {

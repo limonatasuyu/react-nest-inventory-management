@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import { ItemSchema, itemSchema } from "../../../validators/item-validator";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { getCookie } from "../../../utils";
 
 export default function CreateItemModal({
   mutate,
@@ -38,10 +37,8 @@ export default function CreateItemModal({
       description: "",
     },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .post("https://react-nest-inventory-management-production.up.railway.app/item", values, {
-          headers: { Authorization: "Bearer " + token },
           withCredentials: true,
         })
         .then(() => {

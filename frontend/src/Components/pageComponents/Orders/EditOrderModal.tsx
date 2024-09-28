@@ -20,7 +20,6 @@ import { OrderData } from "../../../interfaces";
 import toast from "react-hot-toast";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { getCookie } from "../../../utils";
 
 export default function EditOrderModal({
   order,
@@ -43,13 +42,11 @@ export default function EditOrderModal({
       dateOrdered: dayjs(new Date(order.dateOrdered)) as unknown as Date,
     },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .put(
           "https://react-nest-inventory-management-production.up.railway.app/order/",
           { ...values, orderId: order._id },
           {
-            headers: { Authorization: "Bearer " + token },
             withCredentials: true,
           }
         )

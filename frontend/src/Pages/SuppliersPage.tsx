@@ -6,7 +6,6 @@ import CreateSupplierModal from "../Components/pageComponents/Suppliers/CreateSu
 import EditSupplierModal from "../Components/pageComponents/Suppliers/EditSupplierModal";
 import DeleteSupplierModal from "../Components/pageComponents/Suppliers/DeleteSupplierModal";
 import { SupplierData } from "../interfaces";
-import { getCookie } from "../utils";
 
 export default function SuppliersPage() {
   const [data, setData] = useState<{
@@ -39,13 +38,12 @@ export default function SuppliersPage() {
   }
 
   function fetchData() {
-    const token = getCookie("access_token");
     axios
       .get(
         `https://react-nest-inventory-management-production.up.railway.app/supplier?page=${
           paginationModel.page + 1
         }&sortBy=${sortingModel.sortBy}&sortOrder=${sortingModel.sortOrder}`,
-        { headers: { Authorization: "Bearer " + token }, withCredentials: true }
+        { withCredentials: true }
       )
       .then((res) => {
         setData(res.data);

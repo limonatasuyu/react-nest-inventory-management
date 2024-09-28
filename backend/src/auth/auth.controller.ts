@@ -36,4 +36,16 @@ export class AuthController {
   async register(@Body() dto: RegisterDTO) {
     return await this.authService.register(dto);
   }
+
+  @Post('logout')
+  async logout(@Response() res: Res) {
+    res.clearCookie('access_token', {
+      path: '/', // Ensure the cookie path is the same as when it was set
+      httpOnly: true, // Match the same attributes
+      secure: true, // Match the same attributes (if you're using HTTPS)
+      sameSite: 'none', // Match the same attributes
+    });
+
+    res.send({ message: 'Logged out successfully.' });
+  }
 }

@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { getCookie } from "../utils";
 import CategoryIcon from "@mui/icons-material/Category";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -66,10 +65,8 @@ export default function HomePage() {
   } | null>(null);
 
   useEffect(() => {
-    const token = getCookie("access_token");
     axios
       .get("https://react-nest-inventory-management-production.up.railway.app/metrics", {
-        headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
       .then((res) => {
@@ -80,7 +77,6 @@ export default function HomePage() {
 
     axios
       .get("https://react-nest-inventory-management-production.up.railway.app/updates", {
-        headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
       .then((res) => {

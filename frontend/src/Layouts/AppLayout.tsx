@@ -16,11 +16,12 @@ import { Outlet, useNavigate } from "react-router";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import CategoryIcon from '@mui/icons-material/Category';
+import CategoryIcon from "@mui/icons-material/Category";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import { getCookie } from "../utils";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import axios from "axios";
+import { useEffect } from "react"
 
 const drawerWidth = 240;
 
@@ -79,28 +80,33 @@ const Drawer = styled(MuiDrawer, {
   ],
 }));
 
-function deleteCookie( name: string, path: string, domain: string ) {
-  if(getCookie(name)) {
-    document.cookie = name + "=" +
-      ((path) ? ";path="+path:"")+
-      ((domain)?";domain="+domain:"") +
-      ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
-  }
-}
-
-
 export default function MiniDrawer() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const access_token = getCookie('access_token')
-  useEffect(() => {
-    if (!access_token) navigate('/login') 
-  }, [access_token, navigate])
 
   function handleLogout() {
-    deleteCookie('access_token', '/', 'localhost')
-    navigate('/login')
+    navigate("/login");
+    axios.post('https://react-nest-inventory-management-production.up.railway.app/auth/logout', {
+      withCredentials: true
+    })
   }
+
+  useEffect(() => {
+    
+  const api = axios.create({
+      baseURL: 'https://react-nest-inventory-management-production.up.railway.app',
+  });
+
+  api.interceptors.response.use(
+    (response) => response, // Return the response if it's successful
+    (error) => {
+      if (error.response && error.response.status === 401) {
+        handleLogout();
+      }
+      return Promise.reject(error);
+    }
+  );
+  }, [])
 
   const items = [
     {
@@ -116,24 +122,32 @@ export default function MiniDrawer() {
     {
       name: "Categories",
       path: "/categories",
-      icon: <CategoryIcon />
+      icon: <CategoryIcon />,
     },
     {
       name: "Suppliers",
       path: "/suppliers",
-      icon: <LocalShippingIcon />
+      icon: <LocalShippingIcon />,
     },
     {
       name: "Orders",
       path: "/orders",
-      icon: <ShoppingCartIcon />
-    }
+      icon: <ShoppingCartIcon />,
+    },
   ];
 
   return (
-    <Box sx={{ display: "flex", alignItems: 'start', height: "100vh", width: "100vw", overflowX: 'hidden' }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "start",
+        height: "100vh",
+        width: "100vw",
+        overflowX: "hidden",
+      }}
+    >
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader sx={open ? {} : { alignSelf: 'center' }}>
+        <DrawerHeader sx={open ? {} : { alignSelf: "center" }}>
           <IconButton
             onClick={() => setOpen(!open)}
             sx={{ "&:focus": { outline: "none" } }}
@@ -152,12 +166,14 @@ export default function MiniDrawer() {
             </ListItem>
           ))}
 
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton onClick={handleLogout}>
-                <ListItemIcon><LogoutIcon /></ListItemIcon>
-                <ListItemText primary={"Logout"} />
-              </ListItemButton>
-            </ListItem>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Logout"} />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Outlet />

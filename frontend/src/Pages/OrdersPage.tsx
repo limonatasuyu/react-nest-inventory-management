@@ -11,7 +11,6 @@ import CreateOrderModal from "../Components/pageComponents/Orders/CreateOrderMod
 import EditOrderModal from "../Components/pageComponents/Orders/EditOrderModal";
 import DeleteOrderModal from "../Components/pageComponents/Orders/DeleteOrderModal";
 import { OrderData } from "../interfaces";
-import { getCookie } from "../utils";
 
 export default function OrdersPage() {
   const [data, setData] = useState<{
@@ -46,10 +45,8 @@ export default function OrdersPage() {
   }
 
   async function fetchItemsSelect() {
-    const token = getCookie("access_token");
     axios
       .get("https://react-nest-inventory-management-production.up.railway.app/item/select", {
-        headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
       .then((res) => {
@@ -57,7 +54,6 @@ export default function OrdersPage() {
       });
     axios
       .get("https://react-nest-inventory-management-production.up.railway.app/supplier/select", {
-        headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
       .then((res) => {
@@ -66,13 +62,12 @@ export default function OrdersPage() {
   }
 
   function fetchData() {
-    const token = getCookie("access_token");
     axios
       .get(
         `https://react-nest-inventory-management-production.up.railway.app/order?page=${paginationModel.page + 1}&sortBy=${
           sortingModel.sortBy
         }&sortOrder=${sortingModel.sortOrder}`,
-        { headers: { Authorization: "Bearer " + token }, withCredentials: true, }
+        { withCredentials: true, }
       )
       .then((res) => {
         setData(res.data);

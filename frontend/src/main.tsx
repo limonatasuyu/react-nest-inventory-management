@@ -1,6 +1,9 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { /*createBrowserRouter,*/ RouterProvider, createHashRouter } from "react-router-dom";
+import {
+  /*createBrowserRouter,*/ RouterProvider,
+  createHashRouter,
+} from "react-router-dom";
 import AuthLayout from "./Layouts/AuthLayout";
 import AppLayout from "./Layouts/AppLayout";
 import LoginPage from "./Pages/LoginPage";

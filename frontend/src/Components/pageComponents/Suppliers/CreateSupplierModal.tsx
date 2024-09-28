@@ -7,7 +7,6 @@ import {
 } from "../../../validators/supplier-validator";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { getCookie } from "../../../utils";
 
 export default function CreateSupplierModal({
   mutate,
@@ -19,10 +18,8 @@ export default function CreateSupplierModal({
   const formik = useFormik<SupplierSchema>({
     initialValues: { name: "", contactInfo: "", address: "" },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .post("https://react-nest-inventory-management-production.up.railway.app/supplier", values, {
-          headers: { Authorization: "Bearer " + token },
           withCredentials: true,
         })
         .then(() => {

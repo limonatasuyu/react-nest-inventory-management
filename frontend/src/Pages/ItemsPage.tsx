@@ -6,7 +6,6 @@ import CreateItemModal from "../Components/pageComponents/Items/CreateItemModal"
 import EditItemModal from "../Components/pageComponents/Items/EditItemModal";
 import DeleteItemModal from "../Components/pageComponents/Items/DeleteItemModal";
 import { ItemData } from "../interfaces";
-import { getCookie } from '../utils'
 
 export default function ItemsPage() {
   const [data, setData] = useState<{
@@ -41,19 +40,16 @@ export default function ItemsPage() {
   }
 
   async function fetchItemsSelect() {
-    const token = getCookie("access_token");
     axios
       .get("https://react-nest-inventory-management-production.up.railway.app/category/select", {
-        headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
       .then((res) => {
         setCategoriesData(res.data);
       });
-  
+
     axios
       .get("https://react-nest-inventory-management-production.up.railway.app/supplier/select", {
-        headers: { Authorization: "Bearer " + token },
         withCredentials: true,
       })
       .then((res) => {
@@ -62,13 +58,12 @@ export default function ItemsPage() {
   }
 
   function fetchData() {
-    const token = getCookie("access_token");
     axios
       .get(
-        `https://react-nest-inventory-management-production.up.railway.app/item?page=${paginationModel.page + 1}&sortBy=${
-          sortingModel.sortBy
-        }&sortItem=${sortingModel.sortItem}`,
-        { headers: { Authorization: "Bearer " + token }, withCredentials: true }
+        `https://react-nest-inventory-management-production.up.railway.app/item?page=${
+          paginationModel.page + 1
+        }&sortBy=${sortingModel.sortBy}&sortItem=${sortingModel.sortItem}`,
+        { withCredentials: true }
       )
       .then((res) => {
         setData(res.data);
@@ -76,7 +71,9 @@ export default function ItemsPage() {
   }
 
   useEffect(fetchData, [paginationModel, sortingModel]);
-  useEffect(() => {fetchItemsSelect()}, [])
+  useEffect(() => {
+    fetchItemsSelect();
+  }, []);
 
   const columns = [
     {
@@ -88,13 +85,13 @@ export default function ItemsPage() {
       field: "category",
       headerName: "Category",
       flex: 1,
-      valueGetter: (val: {name: string}) => val.name
+      valueGetter: (val: { name: string }) => val.name,
     },
     {
       field: "supplier",
       headerName: "Supplier",
-      flex: 1, 
-      valueGetter: (val: {name: string}) => val.name
+      flex: 1,
+      valueGetter: (val: { name: string }) => val.name,
     },
     {
       field: "price",
@@ -125,7 +122,12 @@ export default function ItemsPage() {
       flex: 1,
       getActions: ({ row }: { row: ItemData }) => {
         return [
-          <EditItemModal item={row} mutate={fetchData} categories={categoriesData} suppliers={suppliersData}/>,
+          <EditItemModal
+            item={row}
+            mutate={fetchData}
+            categories={categoriesData}
+            suppliers={suppliersData}
+          />,
           <DeleteItemModal item={row} mutate={fetchData} />,
         ];
       },
@@ -133,18 +135,13 @@ export default function ItemsPage() {
   ];
   return (
     <Box display="flex" sx={{ ml: 2, flexDirection: "column", width: "100%" }}>
-      <Box
-        display="flex"
-        sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: 'wrap' }}
-      >
+      <Box display="flex" sx={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
         <Box>
           <Typography variant="h1">Items</Typography>
-          <Typography variant="h6">
-            You can see items and stuff from this page
-          </Typography>
+          <Typography variant="h6">You can see items and stuff from this page</Typography>
         </Box>
         <Box sx={{ mr: 10 }}>
-          <CreateItemModal mutate={fetchData} categories={categoriesData} suppliers={suppliersData}/>
+          <CreateItemModal mutate={fetchData} categories={categoriesData} suppliers={suppliersData} />
         </Box>
       </Box>
       <DataGrid

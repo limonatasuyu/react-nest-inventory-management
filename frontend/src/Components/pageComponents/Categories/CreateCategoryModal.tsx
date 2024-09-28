@@ -7,7 +7,6 @@ import {
 } from "../../../validators/category-validator";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { getCookie } from "../../../utils";
 
 export default function CreateCategoryModal({
   mutate,
@@ -19,10 +18,8 @@ export default function CreateCategoryModal({
   const formik = useFormik<CategorySchema>({
     initialValues: { name: "", description: "" },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .post("https://react-nest-inventory-management-production.up.railway.app/category", values, {
-          headers: { Authorization: "Bearer " + token },
           withCredentials: true,
         })
         .then(() => {

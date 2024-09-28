@@ -10,7 +10,6 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import { CategoryData } from "../../../interfaces";
 import toast from "react-hot-toast";
-import { getCookie } from "../../../utils";
 
 export default function EditCategoryModal({
   category,
@@ -25,13 +24,11 @@ export default function EditCategoryModal({
   const formik = useFormik<CategorySchema>({
     initialValues: { name: category.name, description: category.description },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .put(
           "https://react-nest-inventory-management-production.up.railway.app/category/",
           { ...values, categoryId: category._id },
           {
-            headers: { Authorization: "Bearer " + token },
             withCredentials: true,
           },
         )

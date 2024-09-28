@@ -17,7 +17,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { getCookie } from "../../../utils";
 
 export default function CreateOrderModal({
   mutate,
@@ -33,10 +32,8 @@ export default function CreateOrderModal({
   const formik = useFormik<OrderSchema>({
     initialValues: { itemId: "", supplierId: "", quantity: 0, dateOrdered: dayjs(new Date()) as unknown as Date },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .post("https://react-nest-inventory-management-production.up.railway.app/order", values, {
-          headers: { Authorization: "Bearer " + token },
           withCredentials: true,
         })
         .then(() => {

@@ -6,7 +6,6 @@ import CreateCategoryModal from "../Components/pageComponents/Categories/CreateC
 import EditCategoryModal from "../Components/pageComponents/Categories/EditCategoryModal";
 import DeleteCategoryModal from "../Components/pageComponents/Categories/DeleteCategoryModal";
 import { CategoryData } from "../interfaces";
-import { getCookie } from "../utils";
 
 export default function CategoriesPage() {
   const [data, setData] = useState<{
@@ -39,13 +38,12 @@ export default function CategoriesPage() {
   }
 
   function fetchData() {
-    const token = getCookie("access_token");
     axios
       .get(
         `https://react-nest-inventory-management-production.up.railway.app/category?page=${
           paginationModel.page + 1
         }&sortBy=${sortingModel.sortBy}&sortOrder=${sortingModel.sortOrder}`,
-        { headers: { Authorization: "Bearer " + token }, withCredentials: true }
+        { withCredentials: true }
       )
       .then((res) => {
         setData(res.data);
@@ -97,9 +95,7 @@ export default function CategoriesPage() {
       >
         <Box>
           <Typography variant="h1">Categories</Typography>
-          <Typography variant="h6">
-            You can see categories and stuff from this page
-          </Typography>
+          <Typography variant="h6">You can see categories and stuff from this page</Typography>
         </Box>
         <Box sx={{ mr: 10 }}>
           <CreateCategoryModal mutate={fetchData} />

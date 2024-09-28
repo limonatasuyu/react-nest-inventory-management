@@ -18,7 +18,6 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import { ItemData } from "../../../interfaces";
 import toast from "react-hot-toast";
-import { getCookie } from "../../../utils";
 
 export default function EditItemModal({
   item,
@@ -43,13 +42,11 @@ export default function EditItemModal({
       description: item.description,
     },
     onSubmit: async (values) => {
-      const token = getCookie("access_token");
       await axios
         .put(
           "https://react-nest-inventory-management-production.up.railway.app/item/",
           { ...values, itemId: item._id },
           {
-            headers: { Authorization: "Bearer " + token },
             withCredentials: true
           }
         )
