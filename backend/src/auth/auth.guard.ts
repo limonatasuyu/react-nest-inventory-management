@@ -12,12 +12,12 @@ export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
+
     if (!token) {
-      const response: Response = context.switchToHttp().getResponse<Response>();
-      response.setHeader('Clear-Site-Data', '"cookies"');
-      throw new UnauthorizedException();
+      this.clearCookies(context);
+      throw new UnauthorizedException('Token not found');
     }
 
     try {
@@ -25,16 +25,21 @@ export class AuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
       request['user'] = payload;
-    } catch {
-      const response: Response = context.switchToHttp().getResponse<Response>();
-      response.setHeader('Clear-Site-Data', '"cookies"');
+    } catch (error) {
+      this.clearCookies(context);
       throw new UnauthorizedException();
     }
+
     return true;
   }
 
-  private extractTokenFromHeader(request: Request) {
+  private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
+  }
+
+  private clearCookies(context: ExecutionContext) {
+    const response: Response = context.switchToHttp().getResponse<Response>();
+    response.setHeader('Clear-Site-Data', '"cookies"');
   }
 }
