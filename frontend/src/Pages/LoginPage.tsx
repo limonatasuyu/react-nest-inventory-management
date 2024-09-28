@@ -30,7 +30,7 @@ export default function LoginPage() {
       axios.post("https://react-nest-inventory-management-production.up.railway.app/auth/login", values, { withCredentials: true }).then((res) => {
         if (res.data.message) {
           toast.success(res.data.message)
-          navigate("/");
+          setTimeout(() => navigate("/"), 2000);
         }
       }).catch(err => {toast.error(err.response?.data.message ?? err.message)})
     },
