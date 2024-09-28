@@ -22,7 +22,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
   const formik = useFormik<LoginSchema>({
     initialValues: { email: "", password: "" },
@@ -30,7 +30,7 @@ export default function LoginPage() {
       axios.post("https://react-nest-inventory-management-production.up.railway.app/auth/login", values, { withCredentials: true }).then((res) => {
         if (res.data.message) {
           toast.success(res.data.message)
-          setTimeout(() => navigate("/"), 2000);
+          navigate("/")
         }
       }).catch(err => {toast.error(err.response?.data.message ?? err.message)})
     },
