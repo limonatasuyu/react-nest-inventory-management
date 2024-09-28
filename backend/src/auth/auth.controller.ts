@@ -18,10 +18,12 @@ export class AuthController {
         result.access_token +
         '; Expires=' +
         oneDayAfter.toUTCString() +
-        '; Path=/',
+        '; Path=/'
+        + '; SameSite=None; Secure;'
     );
     res.set('Access-Control-Allow-Origin', 'https://limonatasuyu.github.io');
     res.set('Access-Control-Allow-Credentials', 'true');
+    res.set('Access-Control-Allow-Headers', 'POST, PUT, GET, OPTIONS, DELETE');
     res.send({ message: result.message });
   }
 
