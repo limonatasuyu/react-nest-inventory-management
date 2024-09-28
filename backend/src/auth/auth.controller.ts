@@ -18,8 +18,7 @@ export class AuthController {
         result.access_token +
         '; Expires=' +
         oneDayAfter.toUTCString() +
-        '; Path=/' +
-        '; SameSite=None; Secure;',
+        '; Path=/',
     );
     res.set('Access-Control-Allow-Origin', 'https://limonatasuyu.github.io');
     res.set('Access-Control-Allow-Credentials', 'true');
