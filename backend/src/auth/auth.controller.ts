@@ -20,7 +20,7 @@ export class AuthController {
         oneDayAfter.toUTCString() +
         '; Path=/',
     );
-    res.set('Access-Control-Allow-Origin', 'http://limonatasuyu.github.io');
+    res.set('Access-Control-Allow-Origin', 'https://limonatasuyu.github.io');
     res.set('Access-Control-Allow-Credentials', 'true');
     res.send({ message: result.message });
   }
