@@ -18,9 +18,9 @@ export class AuthController {
         result.access_token +
         '; Expires=' +
         oneDayAfter.toUTCString() +
-        '; Path=/'
+        '; Path=/',
     );
-    res.set('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.set('Access-Control-Allow-Origin', 'http://limonatasuyu.github.io');
     res.set('Access-Control-Allow-Credentials', 'true');
     res.send({ message: result.message });
   }
