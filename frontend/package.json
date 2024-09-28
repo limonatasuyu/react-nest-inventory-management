@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "private": true,
+  "homepage": "https://limonatasuyu.github.io/react-nest-inventory-management",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
