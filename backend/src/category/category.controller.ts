@@ -10,6 +10,7 @@ import {
   Request,
   UseGuards,
   UseInterceptors,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import {
@@ -38,6 +39,7 @@ export class CategoryController {
 
   @Post()
   async createCategory(@Body() body: CreateCategoryDTO, @Request() req) {
+    req.res.set('Cache-Control', 'no-store');
     return await this.categoryService.createCategory({
       ...body,
       userId: req.user.sub,

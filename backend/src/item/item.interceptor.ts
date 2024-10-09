@@ -11,26 +11,32 @@ export class ItemInterceptor extends CacheInterceptor {
     const requestMethod = httpAdapter.getRequestMethod(request);
     if (requestMethod === 'GET') return undefined;
 
+    this.handleCaches(requestMethod);
+    return request;
+  }
+
+  private async handleCaches(requestMethod: string) {
     if (requestMethod === 'DELETE') {
-      const itemDeleteCount = this.cacheManager.get(cacheKeys.item.delete);
-      this.cacheManager.set(
+      const itemDeleteCount =
+        (await this.cacheManager.get(cacheKeys.item.delete)) ?? 0;
+      await this.cacheManager.set(
         cacheKeys.item.delete,
         itemDeleteCount ? itemDeleteCount + 1 : 1,
       );
     } else if (requestMethod === 'POST') {
-      const itemCreationCount = this.cacheManager.get(cacheKeys.item.create);
-      this.cacheManager.set(
+      const itemCreationCount =
+        (await this.cacheManager.get(cacheKeys.item.create)) ?? 0;
+      await this.cacheManager.set(
         cacheKeys.item.create,
         itemCreationCount ? itemCreationCount + 1 : 1,
       );
     } else if (requestMethod === 'PUT') {
-      const itemUpdateCount = this.cacheManager.get(cacheKeys.item.update);
-      this.cacheManager.set(
+      const itemUpdateCount =
+        (await this.cacheManager.get(cacheKeys.item.update)) ?? 0;
+      await this.cacheManager.set(
         cacheKeys.item.update,
         itemUpdateCount ? itemUpdateCount + 1 : 1,
       );
     }
-
-    return httpAdapter.getRequestUrl(request);
   }
 }

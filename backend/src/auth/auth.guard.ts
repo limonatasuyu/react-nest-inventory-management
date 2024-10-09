@@ -29,7 +29,6 @@ export class AuthGuard implements CanActivate {
       this.clearCookies(context);
       throw new UnauthorizedException();
     }
-
     return true;
   }
 

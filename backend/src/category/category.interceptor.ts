@@ -11,32 +11,32 @@ export class CategoryInterceptor extends CacheInterceptor {
     const requestMethod = httpAdapter.getRequestMethod(request);
     if (requestMethod === 'GET') return undefined;
 
+    this.handleCaches(requestMethod);
+    return request;
+  }
+
+  private async handleCaches(requestMethod: string) {
     if (requestMethod === 'DELETE') {
-      const categoryDeleteCount = this.cacheManager.get(
-        cacheKeys.category.delete,
-      );
-      this.cacheManager.set(
+      const categoryDeleteCount =
+        (await this.cacheManager.get(cacheKeys.category.delete)) ?? 0;
+      await this.cacheManager.set(
         cacheKeys.category.delete,
         categoryDeleteCount ? categoryDeleteCount + 1 : 1,
       );
     } else if (requestMethod === 'POST') {
-      const categoryCreationCount = this.cacheManager.get(
-        cacheKeys.category.create,
-      );
-      this.cacheManager.set(
+      const categoryCreationCount =
+        (await this.cacheManager.get(cacheKeys.category.create)) ?? 0;
+      await this.cacheManager.set(
         cacheKeys.category.create,
         categoryCreationCount ? categoryCreationCount + 1 : 1,
       );
     } else if (requestMethod === 'PUT') {
-      const categoryUpdateCount = this.cacheManager.get(
-        cacheKeys.category.update,
-      );
-      this.cacheManager.set(
+      const categoryUpdateCount =
+        (await this.cacheManager.get(cacheKeys.category.update)) ?? 0;
+      await this.cacheManager.set(
         cacheKeys.category.update,
         categoryUpdateCount ? categoryUpdateCount + 1 : 1,
       );
     }
-
-    return httpAdapter.getRequestUrl(request);
   }
 }

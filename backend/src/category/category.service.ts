@@ -77,6 +77,7 @@ export class CategoryService {
   }
 
   async createCategory(dto: CreateCategoryDTO) {
+
     const existinguser = await this.userService.findOne(dto.userId);
     if (!existinguser) throw new BadRequestException();
     const createdCategory = await this.categoryModel.create({
